@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ТСЖ «Шефская» — интерактивный прототип</title>
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1b2430; --muted:#6b7686; --line:#e3e8ef;
+    --brand:#0f6bff; --brand-dark:#0a54c9; --green:#1f9d63; --amber:#d97706; --red:#d42a3c;
+    --radius:14px;
+    --shadow:0 1px 3px rgba(16,24,40,.06),0 8px 24px rgba(16,24,40,.08);
+    --static-bg:#ffffff;
+  }
+  html[data-theme="dark"]{
+    --bg:#12161f; --card:#1b2230; --ink:#e6edf6; --muted:#9aa7b8; --line:#2a3345;
+    --brand:#4d94ff; --brand-dark:#6ea8ff; --green:#2ed189; --amber:#f0a33c; --red:#ff5c6d;
+    --shadow:0 1px 3px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+    --static-bg:#1b2230;
+  }
+  @media (prefers-color-scheme: dark){
+    html:not([data-theme="light"]){
+      --bg:#12161f; --card:#1b2230; --ink:#e6edf6; --muted:#9aa7b8; --line:#2a3345;
+      --brand:#4d94ff; --brand-dark:#6ea8ff; --green:#2ed189; --amber:#f0a33c; --red:#ff5c6d;
+      --shadow:0 1px 3px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+      --static-bg:#1b2230;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
+  a{color:var(--brand);text-decoration:none;cursor:pointer}
+  a:hover{text-decoration:underline}
+  button{font-family:inherit;cursor:pointer}
+
+  .intro{background:#101a2b;color:#eef3fa;padding:10px 0}
+  html[data-theme="dark"] .intro{background:#0b0f18}
+  @media (prefers-color-scheme: dark){ html:not([data-theme="light"]) .intro{background:#0b0f18} }
+  .theme-switch{margin-left:auto}
+  .theme-select{background:#233248;color:#eef3fa;border:1px solid #33445f;border-radius:8px;padding:5px 8px;font-size:12px;cursor:pointer;font-family:inherit}
+  .theme-select option{color:#1b2430;background:#fff}
+  .theme-panel{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:0 0 18px}
+  .theme-panel-label{font-size:13px;color:var(--muted);font-weight:600}
+  .theme-opt{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;color:var(--ink)}
+  .theme-opt.on{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand);color:var(--brand-dark);font-weight:600;background:#fff}
+  html.large-mode{font-size:19px}
+  html.large-mode .phone .appnav,
+  html.large-mode .appbody,
+  html.large-mode .bottomnav{font-size:larger}
+  html.large-mode .appbody .t, html.large-mode .appbody .btn{font-size:16px}
+  html.large-mode .metric .val{font-size:26px}
+  html.large-mode .hello{font-size:26px}
+  html.large-mode .hint{font-size:15px}
+  html[data-theme="dark"] .theme-panel{background:var(--static-bg)}
+  @media (prefers-color-scheme: dark){ html:not([data-theme="light"]) .theme-panel{background:var(--static-bg)} }
+  .intro .wrap{max-width:1180px;margin:0 auto;padding:0 20px;font-size:13px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+  .intro b{color:#ffd166}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+  h1.page{font-size:26px;margin:26px 0 4px}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 22px}
+
+  .role-tabs{display:flex;gap:10px;margin:0 0 18px;flex-wrap:wrap}
+  .role-tab{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 16px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px}
+  .role-tab .dot{width:10px;height:10px;border-radius:50%}
+  .role-tab.on{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand);color:var(--brand-dark);font-weight:600}
+
+  .tsj-tabs{display:flex;gap:10px;margin:0 0 18px;flex-wrap:wrap;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+  .tsj-lbl{font-size:13px;color:var(--muted);font-weight:600;margin-right:2px}
+  .tsj-tab{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:7px 14px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px}
+  .tsj-tab .dot{width:10px;height:10px;border-radius:50%}
+  .tsj-tab .tsj-hint{font-size:11px;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:6px;padding:1px 6px}
+  .tsj-tab.on{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand);color:var(--brand-dark);font-weight:600;background:#fff}
+
+  .device{background:#0f1220;border-radius:16px;padding:14px;box-shadow:0 20px 50px rgba(16,24,40,.25)}
+  .device-cap{color:#9aa5b5;font-size:12px;padding:2px 4px 10px;letter-spacing:.02em}
+  .viewport{background:var(--bg);border-radius:10px;min-height:520px;overflow:hidden;position:relative}
+
+  /* PHONE */
+  .phone{max-width:360px;margin:0 auto;overflow:hidden;background:var(--bg)}
+  .phone .statusbar{background:#fff;padding:9px 18px 7px;font-size:12px;display:flex;justify-content:space-between;font-weight:600;color:var(--ink)}
+  .appnav{background:#fff;border-bottom:1px solid var(--line);padding:13px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+  .appnav .brand{font-weight:700;font-size:16px}
+  .appnav .brand small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+  .avatar{width:32px;height:32px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;cursor:pointer}
+  .bell-dot{position:absolute;top:-6px;right:-8px;background:var(--red);color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center}
+  .notif-row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+  .notif-row:first-child{border-top:0}
+  .notif-row .n-t{font-size:13px;font-weight:600}
+  .notif-row .n-m{font-size:12px;color:var(--muted)}
+  .notif-row .n-time{font-size:11px;color:var(--muted);white-space:nowrap;margin-left:auto}
+  .notif-row.unread .n-t{color:var(--brand-dark)}
+  .notif-row.unread::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--brand);margin-top:5px;flex-shrink:0}
+  .chat-bubble{max-width:80%;padding:9px 12px;border-radius:14px;font-size:13px;margin-bottom:8px;line-height:1.4}
+  .chat-bubble.mine{background:var(--brand);color:#fff;margin-left:auto}
+  .chat-bubble.theirs{background:var(--card);border:1px solid var(--line);color:var(--ink);margin-right:auto}
+  .chat-bubble .cb-time{display:block;font-size:10px;opacity:.7;margin-top:3px}
+  .smart-event{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+  .smart-event:first-child{border-top:0}
+  .se-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .appbody{padding:14px 18px 24px}
+  .bottomnav{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex}
+  .bn{flex:1;text-align:center;padding:9px 2px 11px;font-size:10px;color:var(--muted);border:0;background:#fff;cursor:pointer}
+  .bn .ico{font-size:18px;display:block;margin-bottom:2px}
+  .bn.active{color:var(--brand)}
+  .simple-card{display:flex;align-items:center;gap:16px;background:#fff;border:2px solid var(--brand);border-radius:16px;padding:20px;margin-bottom:14px;cursor:pointer}
+  .simple-card:hover{background:#f4f8ff}
+  .simple-title{font-size:22px;font-weight:800;color:var(--ink)}
+  .simple-sub{font-size:16px;color:var(--muted)}
+  html[data-theme="dark"] .simple-card{background:var(--static-bg)}
+  @media (prefers-color-scheme: dark){ html:not([data-theme="light"]) .simple-card{background:var(--static-bg)} }
+  .entry-overlay{position:absolute;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:20;padding:20px}
+  .entry-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;width:100%;max-width:320px;text-align:center;box-shadow:var(--shadow)}
+  .entry-card h2{color:var(--ink);font-size:20px}
+  .entry-sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+  .entry-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .role-entry{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 8px;cursor:pointer;font-family:inherit;text-align:center;transition:border-color .15s}
+  .role-entry:hover{border-color:var(--brand)}
+  .re-ico{font-size:26px}
+  .re-name{font-size:13px;font-weight:600;color:var(--ink);margin-top:6px}
+  html[data-theme="dark"] .role-entry{background:var(--static-bg)}
+
+  .hello{font-size:19px;font-weight:700;margin:2px 0 1px}
+  .hint{color:var(--muted);font-size:13px;margin-bottom:12px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  .metric{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px}
+  .metric .lbl{font-size:12px;color:var(--muted)}
+  .metric .val{font-size:20px;font-weight:700;margin-top:2px}
+  .metric .val.neg{color:var(--red)}
+  .metric .val.ok{color:var(--green)}
+  .metric .sub2{font-size:12px;color:var(--muted)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+  .card h4{margin:0 0 10px;font-size:14px}
+  .row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+  .row:first-child{border-top:0}
+  .row .t{font-size:13px}
+  .row .m{color:var(--muted);font-size:12px}
+  .row .amt{font-weight:700;font-size:13px;white-space:nowrap;margin-left:auto}
+  .row .grow{flex:1;min-width:0}
+  .icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+  .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600}
+  .badge.red{background:#fee2e2;color:var(--red)}
+  .badge.green{background:#dcfce7;color:var(--green)}
+  .badge.amber{background:#fef3c7;color:var(--amber)}
+  .badge.blue{background:#e0ecff;color:var(--brand-dark)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--brand);color:#fff;border:0;border-radius:10px;padding:11px 14px;font-size:14px;font-weight:600;width:100%}
+  .btn:hover{background:var(--brand-dark)}
+  .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+  .btn.ghost:hover{background:#f4f6f9}
+  .btn.sm{padding:7px 10px;font-size:13px;width:auto}
+  .btn.success{background:var(--green)}
+  .btn.success:hover{background:#178354}
+  .btn.danger{background:var(--red)}
+  .btn.danger:hover{background:#b32233}
+  .fake-bar{height:8px;border-radius:6px;background:var(--green);margin:4px 0}
+  .fake-bar.amber{background:var(--amber)}
+  .fake-bar.red{background:var(--red)}
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .unit-tile{flex:1;min-width:120px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+  .unit-tile .big{font-size:17px;font-weight:700}
+  .unit-tile .big.neg{color:var(--red)}
+  .unit-tile .ml{font-size:11px;color:var(--muted)}
+  .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:16px 0 8px;font-weight:700}
+  .sos-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#b30019,#d42a3c);color:#fff;border:0;border-radius:14px;padding:15px;font-size:16px;font-weight:700;width:100%;cursor:pointer;box-shadow:0 4px 14px rgba(212,42,60,.4)}
+  .sos-btn:hover{filter:brightness(1.08)}
+  .menu-list{display:grid;gap:8px}
+  .menu-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 8px;transition:border-color .15s}
+  .menu-item:hover{border-color:var(--brand)}
+  .menu-item .m2{font-size:12px;font-weight:600;margin-top:6px}
+  .hot-item{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;margin-bottom:9px;cursor:pointer}
+  .hot-item:hover{border-color:var(--brand)}
+  .hot-ico{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+  .forum-post{border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px;margin-bottom:10px}
+  .forum-post .fp-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .forum-post .fp-likes{font-size:12px;color:var(--muted);margin-top:6px}
+  .forum-cat{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
+  .forum-cat-head{width:100%;display:flex;align-items:center;gap:10px;padding:13px 14px;background:#f7f9fc;border:0;border-bottom:1px solid var(--line);font-family:inherit;font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;text-align:left}
+  .forum-cat-head:hover{background:#f0f3f8}
+  .fc-arrow{color:var(--brand);width:14px}
+  .fc-count{margin-left:auto;background:var(--brand);color:#fff;border-radius:12px;font-size:12px;font-weight:600;padding:1px 9px}
+  .forum-cat .forum-post{border:0;border-bottom:1px solid var(--line);border-radius:0;margin:0}
+  .forum-cat .forum-post:last-child{border-bottom:0}
+  .forum-cat .empty{padding:16px}
+  .cam-tile{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;margin-bottom:12px}
+  .cam-preview{height:110px;background:#0f1220;display:flex;align-items:center;justify-content:center;color:#6b7686;font-size:34px;position:relative}
+  .cam-live{position:absolute;top:8px;left:8px;background:var(--red);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700}
+  .cam-body{padding:10px 12px;display:flex;justify-content:space-between;align-items:center}
+  .cam-body .t{font-size:13px;font-weight:600}
+  .cam-body .m{font-size:11px;color:var(--muted)}
+  .dl-actions{display:flex;gap:8px}
+  .dl-actions .btn{flex:1;padding:9px;font-size:13px}
+  .points-big{text-align:center;padding:18px 10px}
+  .points-big .pts{font-size:38px;font-weight:800;color:var(--green)}
+  .points-big .pl{font-size:13px;color:var(--muted)}
+  .tip{background:#eef4ff;border:1px solid #d5e3ff;color:#0a54c9;border-radius:10px;padding:10px 12px;font-size:12px;margin-bottom:14px}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+  .input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;font-family:inherit}
+  .input:focus{outline:none;border-color:var(--brand)}
+  select.input{background:#fff}
+
+  /* DESK */
+  .desk{display:grid;grid-template-columns:auto 1fr;min-height:520px}
+  .sidebar{width:212px;background:#0f1220;color:#cdd7e3;display:flex;flex-direction:column;font-size:13px}
+  .sidebar .brand{color:#fff;font-weight:700;padding:18px 18px 12px;font-size:15px}
+  .sidebar .brand div{font-weight:400;font-size:11px;color:#8a93a6}
+  .snav{padding:8px 10px;display:flex;gap:9px;align-items:center;border-radius:8px;margin:1px 10px;cursor:pointer;color:#c7d1dd;border:0;background:transparent;font-size:13px;text-align:left;width:calc(100% - 20px)}
+  .snav:hover{background:#1c2135}
+  .snav.active{background:#16203a;color:#fff}
+  .snav .ico{width:18px;text-align:center}
+  .snav .cnt{margin-left:auto;background:#31406b;border-radius:10px;font-size:11px;padding:0 7px}
+  .sb-foot{margin-top:auto;padding:14px;font-size:11px;color:#6b7686;border-top:1px solid #232a40}
+  .dmain{background:var(--bg);overflow:auto;padding:20px 26px;min-height:520px}
+  .dtop{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .dstat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 16px;flex:1;min-width:150px;cursor:pointer}
+  .dstat:hover{border-color:var(--brand)}
+  .dstat .l{font-size:12px;color:var(--muted)}
+  .dstat .v{font-size:22px;font-weight:700;margin-top:2px}
+  .dstat .v small{font-size:12px;font-weight:500;color:var(--green)}
+  .dstat .v small.bad{color:var(--red)}
+  .chart{display:flex;align-items:flex-end;gap:10px;height:140px;margin:14px 0 4px;padding:0 4px}
+  .chart-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%}
+  .chart-bar{width:100%;max-width:36px;border-radius:6px 6px 0 0;min-height:4px}
+  .chart-lbl{font-size:10px;color:var(--muted)}
+  .chart-v{font-size:10px;color:var(--muted)}
+  .legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-top:8px;flex-wrap:wrap}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  .dcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+  .dcard h4{margin:0 0 12px;font-size:14px}
+  table{width:100%;border-collapse:collapse}
+  th{font-size:11px;color:var(--muted);text-align:left;padding:6px 10px;border-bottom:1px solid var(--line);font-weight:600}
+  td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  .nm{font-weight:600}
+  .td-actions{display:flex;gap:6px;flex-wrap:wrap}
+  .empty{text-align:center;color:var(--muted);padding:30px 10px;font-size:13px}
+
+  /* MODAL */
+  .modal-bg{position:fixed;inset:0;background:rgba(16,24,40,.5);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+  .modal-bg.on{display:flex}
+  .modal{background:#fff;border-radius:16px;width:100%;max-width:460px;max-height:86vh;overflow:auto;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .modal h3{margin:0 0 6px;font-size:18px}
+  .modal .m-sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+  .modal-actions{display:flex;gap:10px;margin-top:16px}
+  .modal-actions .btn{flex:1}
+  .m-close{float:right;border:0;background:#f4f6f9;width:30px;height:30px;border-radius:8px;font-size:16px;cursor:pointer}
+
+  /* TOAST */
+  .toasts{position:fixed;bottom:18px;right:18px;display:flex;flex-direction:column;gap:8px;z-index:200}
+  .toast{background:#1b2430;color:#fff;padding:12px 16px;border-radius:10px;font-size:13px;box-shadow:0 8px 20px rgba(0,0,0,.25);animation:pop .18s ease}
+  .toast.ok{border-left:4px solid var(--green)}
+  .toast.err{border-left:4px solid var(--red)}
+  .toast.info{border-left:4px solid var(--brand)}
+  #push-root{position:fixed;top:12px;left:0;right:0;display:flex;justify-content:center;pointer-events:none;z-index:300;padding:0 16px}
+  .push-banner{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.25);padding:12px 14px;width:100%;max-width:380px;pointer-events:auto;transform:translateY(-120%);opacity:0;transition:transform .25s ease,opacity .25s ease;font-family:inherit}
+  .push-banner.show{transform:translateY(0);opacity:1}
+  .push-ico{font-size:22px;flex-shrink:0}
+  .push-body{flex:1}
+  .push-app{font-size:11px;color:var(--muted)}
+  .push-title{font-size:13px;font-weight:700;color:var(--ink)}
+  .push-text{font-size:12px;color:var(--muted);line-height:1.4}
+  .push-close{border:0;background:transparent;color:var(--muted);font-size:14px;cursor:pointer;flex-shrink:0}
+  html[data-theme="dark"] .push-banner{background:var(--static-bg)}
+  @media (prefers-color-scheme: dark){ html:not([data-theme="light"]) .push-banner{background:var(--static-bg)} }
+  @keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .footnote{font-size:12px;color:var(--muted);margin-top:16px;max-width:760px;padding-bottom:30px}
+  .nota{background:#fffbe6;border:1px solid #ffe58e;color:#7a5b00;border-radius:10px;padding:10px 12px;font-size:12px;margin-bottom:14px}
+
+  /* BENEFITS DASHBOARD */
+  .bens-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:6px;margin-bottom:26px;box-shadow:var(--shadow)}
+  .bens-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;padding:16px 18px 14px}
+  .bens-head h2{margin:0;font-size:20px}
+  .bens-head p{margin:6px 0 0;font-size:13px;color:var(--muted)}
+  .bens-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;padding:0 12px 12px}
+  .bens-st{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 15px}
+  .bens-st h3{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:15px}
+  .bens-ico{width:30px;height:30px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+  .bens-st ul{margin:0;padding:0;list-style:none}
+  .bens-st li{font-size:12.5px;color:var(--ink);padding:5px 0 5px 0;border-top:1px dashed var(--line)}
+  .bens-st li:first-child{border-top:0}
+  .bens-st li b{color:var(--brand-dark)}
+  .bens-tag{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600;margin-left:auto;white-space:nowrap}
+
+  /* ===== Тёмная тема: переопределения жёстко заданных #fff ===== */
+  html[data-theme="dark"] .role-tab,
+  html[data-theme="dark"] .tsj-tabs,
+  html[data-theme="dark"] .tsj-tab.on,
+  html[data-theme="dark"] .phone .statusbar,
+  html[data-theme="dark"] .appnav,
+  html[data-theme="dark"] .bottomnav,
+  html[data-theme="dark"] .bn,
+  html[data-theme="dark"] .btn.ghost,
+  html[data-theme="dark"] .unit-tile,
+  html[data-theme="dark"] .menu-item,
+  html[data-theme="dark"] .hot-item,
+  html[data-theme="dark"] .forum-post,
+  html[data-theme="dark"] .forum-cat,
+  html[data-theme="dark"] .cam-tile,
+  html[data-theme="dark"] .modal,
+  html[data-theme="dark"] .bens-card,
+  html[data-theme="dark"] .nota,
+  html[data-theme="dark"] .card { background: var(--static-bg) !important; }
+  html[data-theme="dark"] .tsj-tab .tsj-hint{background:var(--static-bg)}
+  html[data-theme="dark"] select.input{background:var(--static-bg);color:var(--ink)}
+  html[data-theme="dark"] .modal .input{border-color:var(--line)}
+  html[data-theme="dark"] .bens-st{background:#151b28}
+  html[data-theme="dark"] .forum-cat-head{background:#161d2b}
+  @media (prefers-color-scheme: dark){
+    html:not([data-theme="light"]) .role-tab,
+    html:not([data-theme="light"]) .tsj-tabs,
+    html:not([data-theme="light"]) .tsj-tab.on,
+    html:not([data-theme="light"]) .phone .statusbar,
+    html:not([data-theme="light"]) .appnav,
+    html:not([data-theme="light"]) .bottomnav,
+    html:not([data-theme="light"]) .bn,
+    html:not([data-theme="light"]) .btn.ghost,
+    html:not([data-theme="light"]) .unit-tile,
+    html:not([data-theme="light"]) .menu-item,
+    html:not([data-theme="light"]) .hot-item,
+    html:not([data-theme="light"]) .forum-post,
+    html:not([data-theme="light"]) .forum-cat,
+    html:not([data-theme="light"]) .cam-tile,
+    html:not([data-theme="light"]) .modal,
+    html:not([data-theme="light"]) .bens-card,
+    html:not([data-theme="light"]) .nota,
+    html:not([data-theme="light"]) .card { background: var(--static-bg) !important; }
+    html:not([data-theme="light"]) select.input{background:var(--static-bg);color:var(--ink)}
+    html:not([data-theme="light"]) .forum-cat-head{background:#161d2b}
+  }
+</style>
+</head>
+<body>
+
+<div class="intro">
+  <div class="wrap">
+    <b>Интерактивный прототип</b>
+    <span id="intro-tsj">ТСЖ «Шефская, 101»</span>
+    <span>Все кнопки работают на демо-данных</span>
+    <span style="margin-left:auto">
+      <label class="theme-switch" title="Тема оформления">
+        <select id="theme-select" class="theme-select">
+          <option value="light">☀️ Светлая</option>
+          <option value="dark">🌙 Тёмная</option>
+          <option value="system">💻 Системная</option>
+        </select>
+      </label>
+    </span>
+  </div>
+</div>
+
+<div class="wrap">
+  <h1 class="page">Приложение ТСЖ — рабочий прототип</h1>
+  <p class="sub">Каждая кнопка, таб и пункт меню открывают экран или модальное окно. Данные демонстрационные, ничего не сохраняется и не отправляется.</p>
+
+  <div class="theme-panel">
+    <span class="theme-panel-label">🎨 Тема оформления:</span>
+    <button class="theme-opt" data-theme-opt="light">☀️ Светлая</button>
+    <button class="theme-opt" data-theme-opt="dark">🌙 Тёмная</button>
+    <button class="theme-opt" data-theme-opt="system">💻 Системная</button>
+    <span style="flex:1"></span>
+    <button class="theme-opt" id="large-mode" title="Крупный шрифт для старших жильцов">🔍 Крупный шрифт</button>
+  </div>
+
+  <div class="card" style="padding:18px 20px;margin-bottom:18px;background:#fff">
+    <h2 style="margin:0 0 8px;font-size:20px">Что это и для чего</h2>
+    <p style="margin:0 0 10px;font-size:14px;color:var(--ink)">
+      Это кликабельный макет приложения для товарищества собственников жилья. Он показывает, как могут выглядеть четыре рабочих места системы:
+      <b>мобильное приложение жильца</b>, <b>мобильное приложение исполнителя по заявкам</b> (сантехник, электрик и т.п.),
+      <b>мобильное приложение члена правления</b> и <b>веб-панель правления</b> (председателя, бухгалтера, диспетчера).
+    </p>
+    <p style="margin:0 0 10px;font-size:14px;color:var(--ink)">
+      Прототип помогает согласовать состав функций до начала разработки: оплата квитанций, показания счётчиков, заявки, голосования ОСС,
+      учёт платежей, контроль заявок и документов. По нему видно, <b>что именно</b> нужно заказать или собрать своими силами.
+    </p>
+    <p style="margin:0;font-size:14px;color:var(--ink)">
+      Всё внутри — <b>демо-данные</b> на вымышленного собственника (квартира 247, которой нет в доме) и условное правление. Вверху можно переключить дом: <b>ТСЖ «Шефская, 101»</b> или <b>ТСЖ «Шефская» (дом 103)</b> — интерфейс одинаковый для обоих. Кнопки ниже открывают экраны и окна,
+      но ничего не отправляют на сервера, в банк или в реальные системы ЖКХ.
+    </p>
+  </div>
+
+  <!-- Benefits dashboard -->
+  <div class="bens-card">
+    <div class="bens-head">
+      <div>
+        <h2>Дашборд: ценность для каждой стороны</h2>
+        <p>Зачем система каждому участнику — коротко и наглядно.</p>
+      </div>
+      <span class="bens-tag" style="background:#e0ecff;color:var(--brand-dark)">Обзор продукта</span>
+    </div>
+    <div class="bens-grid">
+      <div class="bens-st">
+        <h3><span class="bens-ico" style="background:var(--brand)">👤</span> Жильцу</h3>
+        <ul>
+          <li><b>Платит онлайн</b> без очередей и визитов</li>
+          <li><b>Прозрачные начисления</b> — видно, за что платит</li>
+          <li><b>Заявки за 2 минуты</b> с фото и статусом</li>
+          <li><b>Показания счётчиков</b> без звонков</li>
+          <li><b>Голосует</b> в ОСС онлайн, видит кворум</li>
+        </ul>
+      </div>
+      <div class="bens-st">
+        <h3><span class="bens-ico" style="background:var(--red)">🏛</span> Правлению</h3>
+        <ul>
+          <li><b>Единая база</b> вместо разрозненных таблиц</li>
+          <li><b>Кворум ОСС</b> проще собрать онлайн</li>
+          <li><b>Меньше конфликтов</b>: платёжная история на виду</li>
+          <li><b>Автоначисления</b> и напоминания</li>
+          <li><b>Управление заявками</b> по исполнителям и срокам</li>
+        </ul>
+      </div>
+      <div class="bens-st">
+        <h3><span class="bens-ico" style="background:var(--amber)">🕴</span> Члену правления</h3>
+        <ul>
+          <li><b>Сводка по дому</b> всегда в телефоне</li>
+          <li><b>Контроль</b> финансов и заявок на ходу</li>
+          <li><b>Быстрое голосование</b> в своих решениях</li>
+          <li><b>Подпись документов</b> без визитов</li>
+          <li><b>Объявления жильцам</b> в один тап</li>
+        </ul>
+      </div>
+      <div class="bens-st">
+        <h3><span class="bens-ico" style="background:var(--green)">🔧</span> Исполнителю</h3>
+        <ul>
+          <li><b>Список задач</b> со сроками и адресами</li>
+          <li><b>Мобильный доступ</b> прямо на объекте</li>
+          <li><b>Фотофиксация</b> и акт выполненных работ</li>
+          <li><b>Статус «выполнено»</b> — работа не теряется</li>
+          <li><b>Приоритет</b> аварийных заявок виден сразу</li>
+        </ul>
+      </div>
+      <div class="bens-st">
+        <h3><span class="bens-ico" style="background:var(--amber)">🧮</span> Бухгалтеру</h3>
+        <ul>
+          <li><b>Автоначисления</b> по тарифам</li>
+          <li><b>Сверка с банком</b> в один клик</li>
+          <li><b>Реестры и отчёты</b> для РСО и комиссии</li>
+          <li><b>Меньше ручного ввода</b> и ошибок</li>
+        </ul>
+      </div>
+      <div class="bens-st">
+        <h3><span class="bens-ico" style="background:#7c3aed">🤝</span> Дому в целом</h3>
+        <ul>
+          <li><b>Выше сбор платежей</b>, ниже задолженность</li>
+          <li><b>Работа не зависит</b> от одного человека</li>
+          <li><b>Прозрачность</b> снижает споры и недоверие</li>
+          <li><b>Современный имидж</b> поднимает ценность жилья</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Principles block -->
+  <div class="bens-card" style="border-color:var(--brand)">
+    <div class="bens-head">
+      <div>
+        <h2>Принципы разработки</h2>
+        <p style="max-width:720px">Проект ведётся на условиях <b>честности, открытости и прозрачности</b> по отношению ко всем стейкхолдерам — собственникам жилья, правлению товарищества, членам ревизионной комиссии, исполнителям и подрядчикам. Для нас это означает:</p>
+      </div>
+      <span class="bens-tag" style="background:#dcfce7;color:var(--green)">Наша позиция</span>
+    </div>
+    <div class="bens-grid">
+      <div class="bens-st">
+        <h3><span class="bens-ico" style="background:var(--brand)">🔍</span> Открытость информации</h3>
+        <p style="font-size:13px;color:var(--ink);margin:0">Состав функций, архитектура, этапы работ, сроки и расходы раскрываются для всех участников — без скрытых платежей и непрозрачных решений.</p>
+      </div>
+      <div class="bens-st">
+        <h3><span class="bens-ico" style="background:var(--green)">🪟</span> Прозрачность процессов</h3>
+        <p style="font-size:13px;color:var(--ink);margin:0">Решения о содержании и стоимости разработки принимаются коллегиально и фиксируются письменно. Ход работ регулярно доводится до заинтересованных сторон.</p>
+      </div>
+      <div class="bens-st">
+        <h3><span class="bens-ico" style="background:var(--amber)">⚖️</span> Честность в данных</h3>
+        <p style="font-size:13px;color:var(--ink);margin:0">Система не вводит в заблуждение: показываемые суммы, статусы и документы всегда соответствуют реальному состоянию дел.</p>
+      </div>
+      <div class="bens-st">
+        <h3><span class="bens-ico" style="background:#7c3aed">🤝</span> Учёт интересов каждой стороны</h3>
+        <p style="font-size:13px;color:var(--ink);margin:0">Результат равно полезен жильцам, правлению, бухгалтерии и исполнителям — а не только одной группе участников.</p>
+      </div>
+      <div class="bens-st">
+        <h3><span class="bens-ico" style="background:var(--red)">📋</span> Подотчётность</h3>
+        <p style="font-size:13px;color:var(--ink);margin:0">Итоги и практический результат остаются в открытом доступе для всех стейкхолдеров проекта.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tsj-tabs">
+    <span class="tsj-lbl">Выберите дом:</span>
+    <button class="tsj-tab on" data-tsj="101"><span class="dot" style="background:var(--brand)"></span> ТСЖ «Шефская, 101»</button>
+    <button class="tsj-tab" data-tsj="103"><span class="dot" style="background:var(--green)"></span> ТСЖ «Шефская» <span class="tsj-hint">дом 103</span></button>
+  </div>
+
+  <div class="role-tabs">
+    <button class="role-tab on" data-role="resident"><span class="dot" style="background:var(--brand)"></span> Режим жильца</button>
+    <button class="role-tab" data-role="worker"><span class="dot" style="background:var(--green)"></span> Режим исполнителя</button>
+    <button class="role-tab" data-role="board"><span class="dot" style="background:var(--amber)"></span> Режим члена правления</button>
+    <button class="role-tab" data-role="admin"><span class="dot" style="background:var(--red)"></span> Режим правления</button>
+  </div>
+  <div class="nota" id="reset-note">Попробуйте всё: создайте заявку, «оплатите» квитанцию, проголосуйте. Сброс состояния — <a id="reset-btn">сбросить прототип</a>.</div>
+
+  <!-- Phone: resident container -->
+  <div class="device" id="wrap-resident" style="background:linear-gradient(180deg,#0f1220,#1c2336)">
+    <div class="device-cap">Мобильное приложение жильца</div>
+    <div class="viewport"><div id="phone-root"></div></div>
+  </div>
+  <div style="height:16px"></div>
+
+  <!-- Phone: worker container -->
+  <div class="device" id="wrap-worker" style="background:linear-gradient(180deg,#10221a,#174a33);display:none">
+    <div class="device-cap">Мобильное приложение исполнителя</div>
+    <div class="viewport"><div id="worker-root"></div></div>
+  </div>
+  <div style="height:16px"></div>
+
+  <!-- Phone: board member container -->
+  <div class="device" id="wrap-board" style="background:linear-gradient(180deg,#3a2c10,#6b4a14);display:none">
+    <div class="device-cap">Мобильное приложение члена правления</div>
+    <div class="viewport"><div id="board-root"></div></div>
+  </div>
+  <div style="height:16px"></div>
+
+  <!-- Desk container -->
+  <div class="device browser-tall" id="wrap-admin" style="display:none">
+    <div class="device-cap">Веб-панель правления</div>
+    <div class="viewport"><div id="desk-root"></div></div>
+  </div>
+</div>
+
+<div id="modal-root"></div>
+<div class="toasts" id="toasts"></div>
+<div id="push-root"></div>
+
+<script>
+/* ============ DEMO DATA ============ */
+let S = {
+  tsj: '101',
+  tsjNames: { '101':'ТСЖ «Шефская, 101»', '103':'ТСЖ «Шефская» (дом 103)' },
+  resident: { screen:'home', pay:false, voted:false },
+  admin: { screen:'dashboard' },
+  worker: { screen:'jobs' },
+  board: { screen:'home' },
+  requests:[
+    {id:184, flat:247, title:'Капает кран на кухне', who:'Сантехник К.', status:'В работе', when:'28 окт', my:true},
+    {id:185, flat:230, title:'Не открывается домофон', who:'Электрик Д.', status:'Срок: сб', when:'2 ноя', my:false},
+    {id:186, flat:231, title:'Подтопление подвала', who:'—', status:'Авария', when:'3 ноя', my:false},
+    {id:181, flat:247, title:'Не горит лампа в подъезде', who:'Электрик Д.', status:'Закрыта', when:'20 окт', my:true}
+  ],
+  meters:[
+    {flat:232, type:'ГВС', val:'—', status:'Просрочено 5 дн.', cls:'red'},
+    {flat:234, type:'Эл/энергия', val:'2 480', status:'Отклонение +41%', cls:'amber'},
+    {flat:233, type:'ХВС', val:'118', status:'Принято', cls:'green'}
+  ],
+  ballots:{smeta:{pos:0, neg:0}},
+  payments:[{month:'Октябрь', amount:4262, date:'05 окт', status:'Оплачено'},
+            {month:'Сентябрь', amount:4582, date:'02 сен', status:'Оплачено'}]
+};
+const APPLIANCES = ['ХВС','ГВС','Электроэнергия','Отопление','Газ'];
+
+/* ============ HELPERS ============ */
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; }
+function toast(msg, type){ const t=el('div','toast '+(type||'info'), msg); document.getElementById('toasts').appendChild(t); setTimeout(()=>{t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300);},2600); }
+function badge(cl, txt){ return `<span class="badge ${cl}">${txt}</span>`; }
+function pushBanner(){
+  // Имитация входящего push-уведомления (шторка сверху)
+  const wrap=document.getElementById('push-root');
+  if(!wrap) return;
+  wrap.innerHTML=`<div class="push-banner">
+    <div class="push-ico">🔔</div>
+    <div class="push-body">
+      <div class="push-app">ТСЖ «Шефская»</div>
+      <div class="push-title">Новое объявление</div>
+      <div class="push-text">Завтра с 10:00 во дворе — асфальтирование, доступ к парковке ограничат.</div>
+    </div>
+    <button class="push-close" data-pushclose>✕</button>
+  </div>`;
+  const b=wrap.querySelector('.push-banner');
+  setTimeout(()=>b.classList.add('show'), 20);
+  wrap.querySelector('[data-pushclose]').onclick=()=>{ b.classList.remove('show'); setTimeout(()=>wrap.innerHTML='',250); };
+  setTimeout(()=>{ b.classList.remove('show'); setTimeout(()=>{ if(wrap.innerHTML) wrap.innerHTML=''; },260); }, 6000);
+}
+
+/* ============ MODAL ============ */
+function modal(html){
+  const root=document.getElementById('modal-root');
+  root.innerHTML=`<div class="modal-bg on" id="mbg"><div class="modal" role="dialog" aria-modal="true">
+    <button class="m-close" data-close="1" aria-label="Закрыть">✕</button>${html}</div></div>`;
+  root.querySelector('[data-close]').onclick=()=>root.innerHTML='';
+  root.querySelector('#mbg').addEventListener('click', e=>{ if(e.target.id==='mbg') root.innerHTML=''; });
+  return root.querySelector('.modal');
+}
+function closeModal(){ document.getElementById('modal-root').innerHTML=''; }
+
+/* ============ RENDER PHONE ============ */
+function renderPhone(){
+  const r=S.resident;
+  const navs=[['home','🏠','Главная'],['bill','🧾','Квитанция'],['meter','📏','Счётчики'],['req','🔧','Заявки'],['vote','📣','Собрание'],['prof','👤','Профиль']];
+  let body='';
+  switch(r.screen){
+    case 'home': body=screenHome(r); break;
+    case 'bill': body=screenBill(r); break;
+    case 'meter': body=screenMeter(); break;
+    case 'req': body=screenRequests(); break;
+    case 'vote': body=screenVote(r); break;
+    case 'prof': body=screenProfile(); break;
+    case 'smart': body=screenSmart(); break;
+    case 'bonus': body=screenBonus(); break;
+    case 'forum': body=screenForum(); break;
+    case 'forumdetail': body=screenForumDetail(r.forumSel); break;
+    case 'hot': body=screenHot(); break;
+    case 'notify': body=screenNotify(); break;
+    case 'chat': body=screenChat(r); break;
+    case 'smartevent': body=screenSmartEvents(); break;
+    case 'complaints': body=screenComplaints(); break;
+    case 'photoquiz': body=screenPhotoQuiz(); break;
+    case 'ossarchive': body=screenOssArchive(); break;
+    case 'simple': body=screenSimple(); break;
+    case 'wifi': body=screenWifi(); break;
+  }
+  document.getElementById('phone-root').innerHTML=`
+    <div class="phone">
+      <div class="statusbar">9:41 <span>📶 🔋</span></div>
+      <div class="appnav">
+        <div class="brand">${S.tsjNames[S.tsj]}<small>кв. 247 · Иванов П. А.</small></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="bell-wrap" data-nav="notify" style="position:relative;cursor:pointer;font-size:20px">🔔<span class="bell-dot">3</span></div>
+          <div class="avatar" data-nav="prof">И</div>
+        </div>
+      </div>
+      <div class="appbody">${body}</div>
+      <div class="bottomnav">${navs.map(n=>`<button class="bn ${r.screen===n[0]?'active':''}" data-nav="${n[0]}"><span class="ico">${n[1]}</span>${n[2]}</button>`).join('')}</div>
+    </div>`;
+  document.querySelectorAll('#phone-root [data-nav]').forEach(b=>b.addEventListener('click',()=>{S.resident.screen=b.dataset.nav; renderPhone();}));
+  wirePhone();
+}
+
+function screenHome(r){
+  return `
+    <div class="hello">Здравствуйте, Пётр 👋</div>
+    <div class="hint">Квитанция за ноябрь 2026 ${r.pay?'· оплачена':'· к оплате'}</div>
+    <div class="grid2">
+      <div class="metric"><div class="lbl">К оплате</div><div class="val ${r.pay?'ok':''}">${r.pay?'0 ₽':'4 582 ₽'}</div><div class="sub2">${r.pay?'оплачено ✓':'до 20 ноября'}</div></div>
+      <div class="metric"><div class="lbl">Задолженность</div><div class="val neg">— 320 ₽</div><div class="sub2">за октябрь</div></div>
+    </div>
+    <button class="btn" data-act="pay">${r.pay?'✓ Оплачено':'💳 Оплатить онлайн'}</button>
+    <div style="height:10px"></div>
+    <button class="btn ghost" data-act="meter">📊 Показания счётчиков · 2 вкл.</button>
+    <div style="height:14px"></div>
+
+    <button class="sos-btn" data-act="sos">🆘 SOS — чрезвычайная ситуация</button>
+    <div style="height:6px"></div>
+    <button class="btn ghost" data-act="hot" style="background:#fff5f5;border-color:#f3cccc">📞 Горячие номера / экстренные службы</button>
+    <div style="height:14px"></div>
+
+    <div class="menu-list" style="grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div class="menu-item" style="text-align:center;cursor:pointer" data-act="smart"><div style="font-size:24px">📹</div><div class="m2">Домофон и камеры</div></div>
+      <div class="menu-item" style="text-align:center;cursor:pointer" data-act="bonus"><div style="font-size:24px">🎁</div><div class="m2">Бонусы и баллы</div></div>
+      <div class="menu-item" style="text-align:center;cursor:pointer" data-act="forum"><div style="font-size:24px">💬</div><div class="m2">Форум дома</div></div>
+    </div>
+    <div style="height:14px"></div>
+    <div class="card">
+      <h4>Объявления <a data-act="announce" style="float:right;font-size:12px">Все →</a></h4>
+      <div class="row">
+        <div class="icon" style="background:#fef3c7">📋</div>
+        <div class="grow"><div class="t">Общее собрание 12 ноября</div><div class="m">Онлайн · кворум 81%</div></div>
+        ${badge('amber','Обсуждение')}
+      </div>
+      <div class="row">
+        <div class="icon" style="background:#fee2e2">⚙️</div>
+        <div class="grow"><div class="t">Плановая остановка ГВС</div><div class="m">4 ноя, 23:00 — 05:00</div></div>
+        ${badge('blue','Планово')}
+      </div>
+      <div class="row">
+        <div class="icon" style="background:#ffe4e1">🚧</div>
+        <div class="grow"><div class="t">Ремонт двери 2-го подъезда</div><div class="m">до 15 ноября</div></div>
+        ${badge('green','В работе')}
+      </div>
+    </div>
+    <div class="card">
+      <h4>Заявка в работе</h4>
+      <div class="row">
+        <div class="icon" style="background:#e0ecff">🔧</div>
+        <div class="grow"><div class="t">Капает кран на кухне</div><div class="m">Слесарь К. · до субботы</div></div>
+        ${badge('green','В работе')}
+      </div>
+    </div>
+    <button class="btn ghost" data-act="newreq">＋ Новая заявка</button>
+    <div style="height:14px"></div>
+    <div class="menu-list" style="grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div class="menu-item" style="text-align:center;cursor:pointer" data-act="chat"><div style="font-size:24px">💬</div><div class="m2">Чат с правлением</div></div>
+      <div class="menu-item" style="text-align:center;cursor:pointer" data-act="smartevent"><div style="font-size:24px">🕹</div><div class="m2">События дома</div></div>
+      <div class="menu-item" style="text-align:center;cursor:pointer" data-act="notify"><div style="font-size:24px">🔔</div><div class="m2">Уведомления</div></div>
+    </div>
+    <div style="height:14px"></div>
+    <div class="menu-list" style="grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div class="menu-item" style="text-align:center;cursor:pointer" data-act="complaints"><div style="font-size:24px">🗑</div><div class="m2">Жалобы на двор</div></div>
+      <div class="menu-item" style="text-align:center;cursor:pointer" data-act="photoquiz"><div style="font-size:24px">📸</div><div class="m2">Фото-опросы</div></div>
+      <div class="menu-item" style="text-align:center;cursor:pointer" data-act="ossarchive"><div style="font-size:24px">📋</div><div class="m2">История ОСС</div></div>
+      <div class="menu-item" style="text-align:center;cursor:pointer" data-act="pushdemo"><div style="font-size:24px">🔕</div><div class="m2">Показать push</div></div>
+      <div class="menu-item" style="text-align:center;cursor:pointer;background:#eef4ff;border-color:var(--brand)" data-act="simple"><div style="font-size:24px">👴</div><div class="m2">Простой режим</div></div>
+      <div class="menu-item" style="text-align:center;cursor:pointer" data-act="wifi"><div style="font-size:24px">📶</div><div class="m2">Wi-Fi точки</div></div>
+    </div>`;
+}
+
+function screenBill(r){
+  if(r.pay){
+    return `<div class="hello">Квитанция</div><div class="hint">Ноябрь 2026 · л/с 247</div>
+      <div class="card" style="text-align:center;padding:24px 14px"><div style="font-size:40px">✅</div><h4 style="margin-top:8px">Оплачено</h4><div class="hint" style="margin:0">4 582 ₽ · 03.11.2026</div></div>
+      <button class="btn ghost" data-act="billreopen">Вернуть к оплате (демо)</button>`;
+  }
+  return `
+    <div class="hello">Квитанция</div>
+    <div class="hint">Ноябрь 2026 · лицевой счёт 247</div>
+    <div class="seg" style="margin-bottom:6px">
+      <div class="unit-tile"><div class="big">4 582 ₽</div><div class="ml">начислено</div></div>
+      <div class="unit-tile"><div class="big neg">320 ₽</div><div class="ml">долг</div></div>
+    </div>
+    <div class="lbl">Строки начисления</div>
+    <div class="row"><div class="t">Содержание жилья</div><div class="amt">1 240 ₽</div></div>
+    <div class="row"><div class="t">Отопление (0,5 Гкал)</div><div class="amt">1 866 ₽</div></div>
+    <div class="row"><div class="t">ХВС (по счётчику, 5 м³)</div><div class="amt">198 ₽</div></div>
+    <div class="row"><div class="t">ГВС (по счётчику, 4 м³)</div><div class="amt">410 ₽</div></div>
+    <div class="row"><div class="t">Электроснабжение (120 кВт·ч)</div><div class="amt">808 ₽</div></div>
+    <div class="row"><div class="t">Капремонт (24 м²)</div><div class="amt">60 ₽</div></div>
+    <button class="btn" style="margin-top:14px" data-act="pay">Оплатить 4 582 ₽</button>
+    <button class="btn ghost" style="margin-top:8px" data-act="payhist">История платежей</button>
+    <button class="btn ghost" style="margin-top:8px" data-act="billarchive">🗂 Архив квитанций</button>
+    <button class="btn ghost" style="margin-top:8px" data-act="billsettings">⚙️ Автоплатёж и напоминания</button>`;
+}
+
+function screenMeter(){
+  const vals=APPLIANCES.map(a=>`<div class="row"><div class="icon" style="background:#e0ecff">📏</div><div class="grow"><div class="t">${a}</div><div class="m">${a==='ХВС'?'показано 118 м³':'показано 2 480 кВт·ч'}</div></div>${badge('green','Передано')}</div>`).join('');
+  return `<div class="hello">Счётчики</div><div class="hint">Передайте показания за ноябрь</div>
+    ${vals}
+    <button class="btn" style="margin-top:6px" data-act="addmeter">＋ Передать показания</button>
+    <button class="btn ghost" style="margin-top:8px" data-act="meterarchive">🗂 Архив показаний</button>
+    <div class="tip" style="margin-top:12px">Показания принимаются с 23-го по 25-е число. Отклонение от нормы подсветится для проверки.</div>`;
+}
+
+function screenRequests(){
+  const mine=S.requests.filter(x=>x.my);
+  const rows=mine.map(x=>`
+    <div class="row">
+      <div class="icon" style="background:#e0ecff">🔧</div>
+      <div class="grow"><div class="t">${x.title}</div><div class="m">№${x.id} · ${x.when} · ${x.who}</div></div>
+      ${badge(x.status==='Закрыта'?'blue':x.status==='Авария'?'red':'green', x.status)}
+      <a data-act="reqdetail" data-id="${x.id}">Подробнее</a>
+    </div>`).join('');
+  return `<div class="hello">Мои заявки</div><div class="hint">Создайте заявку — диспетчер направит исполнителя</div>
+    <button class="btn" data-act="newreq">＋ Новая заявка</button>
+    <div style="height:12px"></div>
+    <div class="card"><h4>Заявки</h4>${rows||`<div class="empty">Заявок пока нет</div>`}</div>`;
+}
+
+function screenVote(r){
+  const v=S.ballots.smeta;
+  const total=v.pos+v.neg;
+  const pct=total? Math.round(v.pos/(v.pos+v.neg)*100):0;
+  return `
+    <div class="hello">Общее собрание</div>
+    <div class="hint">ОСС · ноябрь 2026</div>
+    <div class="card">
+      <h4>Утвердить смету на 2027 год</h4>
+      ${v.pos||v.neg ? `<div class="fake-bar" style="width:${pct}%"></div><div class="hint" style="margin:4px 0 12px">Ваш голос: <b>${r.voted?'За':'—'}</b> · «За» ${pct}%</div>`:''}
+      <div class="row"><div class="t">Освещение и МОП</div><div class="amt">312 000 ₽</div></div>
+      <div class="row"><div class="t">Капитальный ремонт кровли</div><div class="amt">1 240 000 ₽</div></div>
+      <div class="row"><div class="t">Двор и озеленение</div><div class="amt">98 000 ₽</div></div>
+      ${r.voted
+        ? `<div style="margin-top:12px"><button class="btn ghost" data-act="voteagain">Изменить голос</button></div>`
+        : `<div class="grid2" style="margin-top:12px">
+             <button class="btn ghost danger" data-act="voteno">Против</button>
+             <button class="btn" data-act="voteyes">За</button>
+           </div>`}
+    </div>
+    <button class="btn ghost" data-act="vacate">&nbsp;Вопросы ОСС</button>
+    <div class="tip">Голос пропорционален доле в праве. Кворум считается в реальном времени.</div>`;
+}
+
+function screenProfile(){
+  return `<div class="hello">Профиль</div><div class="hint">Лицевой счёт и данные</div>
+    <div class="card">
+      <h4>Собственник</h4>
+      <div class="row"><div class="t">ФИО</div><div class="amt">Иванов П. А.</div></div>
+      <div class="row"><div class="t">Квартира</div><div class="amt">247 · 24 м²</div></div>
+      <div class="row"><div class="t">Доля в праве</div><div class="amt">1/1</div></div>
+      <div class="row"><div class="t">Лицевой счёт</div><div class="amt">0000247</div></div>
+    </div>
+    <div class="card" style="border-color:#d5e3ff;background:linear-gradient(180deg,#f4f8ff,#fff)">
+      <h4>🪪 Онлайн-визитка</h4>
+      <p style="font-size:13px;color:var(--muted);margin:0 0 10px">Бесплатная цифровая визитка — поделитесь контактами одним касанием: телефон, email, квартира.</p>
+      <button class="btn" data-act="businesscard">🪪 Открыть мою визитку</button>
+      <div style="height:6px"></div>
+    </div>
+    <button class="btn ghost" data-act="editprof">Редактировать контакты</button>
+    <div style="height:8px"></div>
+    <button class="btn ghost" data-act="share">Передать документ ТСЖ</button>`;}
+
+function screenSmart(){
+  return `<div class="hello">Домофон и камеры</div><div class="hint">Управление доступом и видеонаблюдение</div>
+    <div class="card"><h4>Домофон (подъезд)</h4>
+      <div class="row"><div class="grow"><div class="t">Входная дверь 2-го подъезда</div><div class="m">статус: закрыта</div></div>${badge('green','Закрыта')}</div>
+      <button class="btn" style="margin-top:6px" data-act="dtopen">🔓 Открыть дверь</button>
+      <div class="dl-actions" style="margin-top:8px">
+        <button class="btn ghost" data-act="dtsos">🔔 Вызов</button>
+        <button class="btn ghost" data-act="dtcode">🔢 Код</button>
+      </div>
+      <div class="row" style="margin-top:8px"><div class="grow"><div class="t">Домофония второго подъезда</div><div class="m">обслуживание сантех/электрик</div></div></div>
+    </div>
+    <div class="lbl">Видеонаблюдение</div>
+    <div class="cam-tile">
+      <div class="cam-preview">📷<span class="cam-live">LIVE</span></div>
+      <div class="cam-body"><div><div class="t">Камера 1 — подъезд</div><div class="m">вход, 2-й этаж</div></div><button class="btn sm ghost" data-act="camfull">Развернуть</button></div>
+    </div>
+    <div class="cam-tile">
+      <div class="cam-preview">📷<span class="cam-live">LIVE</span></div>
+      <div class="cam-body"><div><div class="t">Камера 2 — двор</div><div class="m">парковка, детская</div></div><button class="btn sm ghost" data-act="camfull">Развернуть</button></div>
+    </div>
+    <div class="lbl">Датчики и сигнализация</div>
+    <div class="card">
+      <div class="row"><div class="icon" style="background:#dcfce7">💧</div><div class="grow"><div class="t">Датчик протечки</div><div class="m">кухня · норма</div></div>${badge('green','ОК')}</div>
+      <div class="row"><div class="icon" style="background:#fef3c7">💨</div><div class="grow"><div class="t">Датчик дыма</div><div class="m">коридор · норма</div></div>${badge('green','ОК')}</div>
+      <div class="row"><div class="icon" style="background:#fee2e2">🔋</div><div class="grow"><div class="t">Батареи датчиков</div><div class="m">заряд 62%</div></div>${badge('amber','Скоро замена')}</div>
+      <button class="btn ghost" style="margin-top:6px" data-act="sensors">🛎 Проверить все датчики</button>
+    </div>
+    <div class="lbl">Временные коды доступа</div>
+    <div class="card">
+      <div class="row"><div class="grow"><div class="t">Курьер · кв. 247</div><div class="m">активен до 18:00 сегодня</div></div>${badge('green','Активен')}</div>
+      <div class="row"><div class="grow"><div class="t">Гость · одноразовый</div><div class="m">вход №2 · 20:00–22:00</div></div>${badge('amber','Ожидает')}</div>
+      <div class="dl-actions" style="margin-top:6px">
+        <button class="btn ghost" data-act="newcode">＋ Создать код</button>
+        <button class="btn ghost" data-act="revokecode">Отозвать</button>
+      </div>
+    </div>
+    <div class="tip">Показ камер и открытие двери — демо. События фиксируются в журнале для правления. Временные коды действуют только в указанный срок.</div>`;
+}
+
+function screenWifi(){
+  return `<div class="hello">Wi-Fi дома</div><div class="hint">Бесплатная точка доступа ТСЖ</div>
+    <div class="card">
+      <div class="row"><div class="icon" style="background:#dbeafe">📶</div><div class="grow"><div class="t">Сеть ТСЖ «Шефская»</div><div class="m">статус: активно · 2 подъезда</div></div>${badge('green','Онлайн')}</div>
+      <div class="row"><div class="t">Логин</div><div class="amt">TSJ-Shefskaya</div></div>
+      <div class="row"><div class="t">Пароль</div><div class="amt">••••••••</div></div>
+      <button class="btn ghost" style="margin-top:6px" data-act="wifishow">👁 Показать пароль</button>
+    </div>
+
+    <div class="card">
+      <h4>Гостевой доступ</h4>
+      <div class="row"><div class="icon" style="background:#dcfce7">🎁</div><div class="grow"><div class="t">Пароль для гостей</div><div class="m">действует 4 часа</div></div>${badge('blue','Гостевая')}</div>
+      <button class="btn ghost" style="margin-top:6px" data-act="wifiguest">🔑 Создать гостевой пароль</button>
+    </div>
+
+    <div class="card">
+      <h4>Подключённые устройства</h4>
+      <div class="row"><div class="icon" style="background:#eef1f6">📟</div><div class="grow"><div class="t">Телефон</div><div class="m">последнее: сейчас</div></div></div>
+      <div class="row"><div class="icon" style="background:#eef1f6">💻</div><div class="grow"><div class="t">Ноутбук</div><div class="m">последнее: сегодня 14:02</div></div></div>
+    </div>
+
+    <div class="tip">Сеть бесплатна для жильцов и управляется правлением. Гостевые пароли — временные.</div>`;
+}
+
+function screenBonus(){
+  const pts=S.bonus?S.bonus.points:1200;
+  return `<div class="hello">Бонусная программа</div><div class="hint">Баллы за активность и оплату</div>
+    <div class="card">
+      <div class="points-big">
+        <div class="pts">${pts} <span style="font-size:18px">баллов</span></div>
+        <div class="pl">1 балл = 1 ₽ при оплате ЖКУ</div>
+      </div>
+      <div class="row"><div class="grow"><div class="t">Заработано в ноябре</div></div><div class="amt ok">+230</div></div>
+      <div class="row"><div class="grow"><div class="t">За передачу показаний вовремя</div></div><div class="amt ok">+30</div></div>
+      <div class="row"><div class="grow"><div class="t">За онлайн-оплату</div></div><div class="amt ok">+50</div></div>
+    </div>
+    <button class="btn" data-act="bonusspend">🎁 Списать баллы за ЖКУ</button>
+    <div style="height:8px"></div>
+    <button class="btn ghost" data-act="bonushist">История начислений</button>
+    <div class="tip">Баллами можно погасить до 30% начислений. Списание — без комиссии.</div>`;
+}
+
+function screenForum(){
+  const p=S.forumPosts||[
+    {id:1, section:'Вопросы и услуги', author:'Марина', flat:234, time:'2 ч назад', title:'Кто убирает подъезд в субботу?', text:'Всем добрый день! Кто-нибудь знает, планируется ли влажная уборка в нашем подъезде? Есть вопросы к графику.', likes:7, replies:[
+      {author:'Сергей', flat:231, time:'1 ч назад', text:'Планируется, график вывесят в подъезде в пятницу.'},
+      {author:'Марина', flat:234, time:'40 мин назад', text:'Спасибо, буду иметь в виду!'}]},
+    {id:2, section:'Безопасность и соседи', author:'Олег', flat:230, time:'сегодня', title:'Потерялись ключи на детской площадке', text:'Оставил связку ключей на скамейке у песочницы. Кто заметил — напишите, пожалуйста!', likes:4, replies:[
+      {author:'Анна', flat:233, time:'30 мин назад', text:'Я видела связку у качелей, отдала консьержу.'}]},
+    {id:3, section:'Безопасность и соседи', author:'Ирина', flat:247, time:'вчера', title:'Курьер у подъезда — можно открыть?', text:'Кто-нибудь сможет впустить курьера в наш подъезд около 14:00?', likes:11, replies:[
+      {author:'Пётр', flat:247, time:'2 ч назад', text:'Я дома, открою, напишите номер заказа.'},
+      {author:'Ирина', flat:247, time:'1 ч назад', text:'Спасибо, скину вам в личку!'}]},
+    {id:4, section:'Обмен и объявления', author:'Наталья', flat:233, time:'вчера', title:'Отдам даром детский велосипед', text:'Добрый день, соседи! Дети выросли, отдам на детской площадке велосипед 3 колёсный. Состояние хорошее.', likes:9, replies:[
+      {author:'Оксана', flat:230, time:'20 мин назад', text:'Забираем, спасибо огромное! Привезли вечером.'}]}
+  ];
+  S.forumPosts=p;
+  const cats=['Вопросы и услуги','Безопасность и соседи','Обмен и объявления'];
+  const sections=cats.map(cat=>{
+    const posts=p.filter(x=>x.section===cat);
+    const open=!S.forumCollapsed||!S.forumCollapsed[cat];
+    const rows=posts.map(x=>`
+      <div class="forum-post">
+        <div class="fp-head"><div class="icon" style="background:#e0ecff">👤</div><div><div class="t">${x.title}</div><div class="m">${x.author}, кв. ${x.flat} · ${x.time}</div></div></div>
+        <div style="font-size:13px">${x.text}</div>
+        <div class="fp-likes"><a data-act="viewpost" data-id="${x.id}" style="font-size:12px;font-weight:600">💬 Ответы (${x.replies.length})</a> · <a data-act="likepost" data-id="${x.id}" style="font-size:12px">👍 ${x.likes}</a></div>
+      </div>`).join('');
+    return `<div class="forum-cat">
+      <button class="forum-cat-head" data-act="togglecat" data-cat="${cat}">
+        <span class="fc-arrow">${open?'▾':'▸'}</span>
+        <span class="fc-name">${cat}</span>
+        <span class="fc-count">${posts.length}</span>
+      </button>
+      ${open?rows||'<div class="empty">Пока нет тем</div>':''}
+    </div>`;
+  }).join('');
+  return `<div class="hello">Форум дома</div><div class="hint">Общение жильцов · по темам</div>
+    <button class="btn" data-act="newpost">✏️ Создать тему / объявление</button>
+    <div style="height:12px"></div>
+    ${sections}`;
+}
+
+function screenForumDetail(id){
+  const x=S.forumPosts.find(p=>p.id===Number(id));
+  if(!x){ toast('Тема не найдена','err'); return; }
+  return `<div class="hello">${x.title}</div><div class="hint">${x.author}, кв. ${x.flat} · ${x.time}</div>
+    <div class="card">
+      <div style="font-size:13px">${x.text}</div>
+      <div class="fp-likes" style="margin-top:6px">👍 ${x.likes}</div>
+    </div>
+    <div class="lbl">Ответы (${x.replies.length})</div>
+    ${x.replies.map(r=>`
+      <div class="forum-post">
+        <div class="fp-head"><div class="icon" style="background:#eef1f6">👤</div><div><div class="t">${r.author}, кв. ${r.flat}</div><div class="m">${r.time}</div></div></div>
+        <div style="font-size:13px">${r.text}</div>
+      </div>`).join('')||'<div class="empty">Ответов пока нет</div>'}
+    <div class="lbl">Ваш ответ</div>
+    <div class="field"><textarea class="input" id="forumreply" rows="2" placeholder="Написать ответ…"></textarea></div>
+    <button class="btn" data-act="replypost" data-id="${x.id}">Отправить ответ</button>
+    <button class="btn ghost" style="margin-top:8px" data-act="backforum">← Назад к форуму</button>`;
+}
+
+function screenHot(){
+  return `<div class="hello">Экстренные службы</div><div class="hint">Нажмите, чтобы позвонить</div>
+    <div class="hot-item" data-act="call" data-num="112"><div class="hot-ico" style="background:#fee2e2">🚨</div><div class="grow"><div class="t">Единый номер экстренных служб</div><div class="m">112 · бесплатно</div></div><b>📞</b></div>
+    <div class="hot-item" data-act="call" data-num="101"><div class="hot-ico" style="background:#ffe4e1">🔥</div><div class="grow"><div class="t">Пожарная служба</div><div class="m">101</div></div><b>📞</b></div>
+    <div class="hot-item" data-act="call" data-num="102"><div class="hot-ico" style="background:#e0ecff">🚓</div><div class="grow"><div class="t">Полиция</div><div class="m">102</div></div><b>📞</b></div>
+    <div class="hot-item" data-act="call" data-num="103"><div class="hot-ico" style="background:#dcfce7">🚑</div><div class="grow"><div class="t">Скорая помощь</div><div class="m">103</div></div><b>📞</b></div>
+    <div class="hot-item" data-act="call" data-num="104"><div class="hot-ico" style="background:#fef3c7">💨</div><div class="grow"><div class="t">Аварийная служба газа</div><div class="m">104</div></div><b>📞</b></div>
+    <div class="lbl">Диспетчерская и УК</div>
+    <div class="hot-item" data-act="call" data-num="+7 900 000-00-00"><div class="hot-ico" style="background:#e0ecff">🛠</div><div class="grow"><div class="t">Диспетчер ТСЖ</div><div class="m">+7 900 000-00-00</div></div><b>📞</b></div>
+    <div class="hot-item" data-act="call" data-num="+7 900 000-00-01"><div class="hot-ico" style="background:#e0ecff">👷</div><div class="grow"><div class="t">Сантехник (аварийный)</div><div class="m">+7 900 000-00-01</div></div><b>📞</b></div>
+    <div class="hot-item" data-act="call" data-num="+7 900 000-00-02"><div class="hot-ico" style="background:#e0ecff">🔌</div><div class="grow"><div class="t">Электрик (аварийный)</div><div class="m">+7 900 000-00-02</div></div><b>📞</b></div>
+    <div class="tip">Номера демонстрационные. В приложении звонок набирается по нажатию.</div>`;
+}
+
+function screenNotify(){
+  const notif=[{t:'Оплата квитанции принята',m:'Ноябрь: 4 582 ₽ успешно оплачено',time:'5 мин',unread:true},
+    {t:'Заявка #184 изменена',m:'Сантехник назначен. Срок — до субботы',time:'1 ч',unread:true},
+    {t:'Показания приняты',m:'Ваши показания ХВС за ноябрь приняты',time:'вчера',unread:true},
+    {t:'Напоминание о собрании',m:'ОСС 12 ноября в 19:00 (онлайн)',time:'вчера',unread:false},
+    {t:'Новое объявление',m:'Плановая остановка ГВС 4 ноября ночью',time:'2 дня',unread:false}];
+  const rows=notif.map(n=>`<div class="notif-row ${n.unread?'unread':''}"><div><div class="n-t">${n.t}</div><div class="n-m">${n.m}</div></div><div class="n-time">${n.time}</div></div>`).join('');
+  return `<div class="hello">Уведомления</div><div class="hint">Центр оповещений дома</div>
+    <button class="btn ghost sm" data-act="notifyread" style="width:auto;margin-bottom:12px">Прочитать все</button>
+    <div class="card">${rows}</div>
+    <div class="tip" style="margin-top:12px">Push-уведомления дублируются сюда. Настройки — в профиле.</div>`;
+}
+
+function screenChat(r){
+  const msgs=r.chat&&r.chat.length?r.chat:[
+    {who:'me',text:'Здравствуйте! Подскажите, когда будет влажная уборка в подъезде?',time:'10:02'},
+    {who:'them',text:'Добрый день! Плановая уборка в субботу с 10:00.',time:'10:05'},
+    {who:'them',text:'Можем сдвинуть на воскресенье, если удобнее.',time:'10:06'}];
+  const bubbles=msgs.map(m=>`<div class="chat-bubble ${m.who==='me'?'mine':'theirs'}">${m.text}<span class="cb-time">${m.time}</span></div>`).join('');
+  return `<div class="hello">Чат с правлением</div><div class="hint">Диспетчер ТСЖ · онлайн</div>
+    <div class="card" style="min-height:200px">${bubbles}</div>
+    <div class="field"><input class="input" id="chatmsg" placeholder="Напишите сообщение…"></div>
+    <button class="btn" data-act="chatsend">Отправить</button>
+    <div class="tip" style="margin-top:12px">Вопросы и ответы сохраняются — жилец и правление видят переписку.</div>`;
+}
+
+function screenSmartEvents(){
+  const ev=[{i:'🔓',bg:'#e0ecff',t:'Открыта входная дверь',m:'Домофон · код #1234 · сегодня 08:12'},
+    {i:'📷',bg:'#eef1f6',t:'Камера 1 зафиксировала движение',m:'Подъезд · сегодня 07:45'},
+    {i:'🚪',bg:'#fef3c7',t:'Вызов домофона',m:'Не отвечен · вчера 18:30'},
+    {i:'🔓',bg:'#dcfce7',t:'Открыта дверь 2-го подъезда',m:'Через приложение · вчера 14:02'}];
+  const rows=ev.map(e=>`<div class="smart-event"><div class="se-ico" style="background:${e.bg}">${e.i}</div><div><div class="t">${e.t}</div><div class="m" style="font-size:12px;color:var(--muted)">${e.m}</div></div></div>`).join('');
+  return `<div class="hello">События дома</div><div class="hint">Домофон и камеры</div>
+    <div class="card">${rows}</div>
+    <div class="lbl">Поиск по событиям</div>
+    <div class="field"><input class="input" placeholder="Например: 2-й подъезд или сегодня"></div>
+    <div class="tip">Журнал хранит последние 30 дней событий доступа и движения.</div>`;
+}
+
+function screenComplaints(){
+  return `<div class="hello">Жалобы на двор</div><div class="hint">Двор, парковка, детская площадка</div>
+    <button class="btn" data-act="newcomplaint">🗑 Подать жалобу</button>
+    <div style="height:12px"></div>
+    <div class="card">
+      <div class="row"><div class="icon" style="background:#fee2e2">🅿️</div><div class="grow"><div class="t">Машина у входа почти сутки</div><div class="m">Игорь, кв. 233 · сегодня</div></div>${badge('amber','На рассмотрении')}</div>
+      <div class="row"><div class="icon" style="background:#fef3c7">🗑</div><div class="grow"><div class="t">Мусор у скамейки</div><div class="m">Аноним · вчера</div></div>${badge('green','Исправлено')}</div>
+      <div class="row"><div class="icon" style="background:#e0ecff">🌳</div><div class="grow"><div class="t">Не кошеная трава у подъезда</div><div class="m">Наталья, кв. 234 · 2 дня</div></div>${badge('red','Отклонено')}</div>
+    </div>
+    <div class="tip">Жалобы видны правлению, статус обновляется автоматически.</div>`;
+}
+
+function screenPhotoQuiz(){
+  return `<div class="hello">Фото-опросы</div><div class="hint">Голосуйте за вариант благоустройства</div>
+    <div class="cam-tile">
+      <div class="cam-preview" style="height:120px">🌳<span class="cam-live">ОПРОС</span></div>
+      <div class="cam-body"><div><div class="t">Варианты клумбы у входа</div><div class="m">выберите лучший · до 10 ноя</div></div></div>
+      <div style="padding:0 12px 12px"><div class="dl-actions"><button class="btn ghost sm" data-act="quizvote">Вариант А</button><button class="btn sm" data-act="quizvote">Вариант Б</button></div></div>
+    </div>
+    <div class="card">
+      <div class="row"><div class="grow"><div class="t">Цвет лавочек во дворе</div><div class="m">завершён · выбрали синий</div></div>${badge('blue','Завершён')}</div>
+    </div>
+    <div class="tip">Фото-опрос — это удобно для решений по благоустройству.</div>`;
+}
+
+function screenOssArchive(){
+  return `<div class="hello">История ОСС</div><div class="hint">Прошедшие собрания и протоколы</div>
+    <div class="card">
+      <div class="row"><div class="icon" style="background:#dcfce7">✅</div><div class="grow"><div class="t">ОСС 20.06.2026 — выбор председателя</div><div class="m">протокол №5 · явка 94%</div></div><a data-act="protview">Протокол</a></div>
+      <div class="row"><div class="icon" style="background:#e0ecff">📄</div><div class="grow"><div class="t">ОСС 15.03.2026 — смета на ремонт</div><div class="m">протокол №3 · явка 81%</div></div><a data-act="protview">Протокол</a></div>
+      <div class="row"><div class="icon" style="background:#eef1f6">📄</div><div class="grow"><div class="t">ОСС 10.11.2025 — годовой отчёт</div><div class="m">протокол №2 · явка 77%</div></div><a data-act="protview">Протокол</a></div>
+    </div>
+    <button class="btn ghost" data-act="protview">Запросить протокол (PDF)</button>
+    <div class="tip">Протоколы хранятся в архиве ТСЖ и доступны собственникам.</div>`;
+}
+
+function screenSimple(){
+  return `<div class="hello" style="font-size:30px">Здравствуйте 👋</div>
+    <div class="hint" style="font-size:20px">Вы — в простом режиме. Крупно и без лишнего.</div>
+
+    <div class="simple-card" data-act="simpMeter">
+      <div style="font-size:34px">📏</div>
+      <div>
+        <div class="simple-title">Передать показания счётчиков</div>
+        <div class="simple-sub">3 шага — займёт минуту</div>
+      </div>
+      <span style="font-size:28px;margin-left:auto">›</span>
+    </div>
+
+    <div class="simple-card" data-act="simpBill">
+      <div style="font-size:34px">🧾</div>
+      <div>
+        <div class="simple-title">Моя квитанция</div>
+        <div class="simple-sub">Сумма и срок — крупно</div>
+      </div>
+      <span style="font-size:28px;margin-left:auto">›</span>
+    </div>
+
+    <div class="simple-card" data-act="simpHelp">
+      <div style="font-size:34px">🆘</div>
+      <div>
+        <div class="simple-title">Позвать на помощь</div>
+        <div class="simple-sub">Позвонить живому человеку</div>
+      </div>
+      <span style="font-size:28px;margin-left:auto">›</span>
+    </div>
+
+    <div class="tip" style="font-size:16px;margin-top:14px">Большие кнопки и крупный шрифт. Если нужна помощь — нажмите «Позвать на помощь».</div>`;
+}
+</script>
+<script>
+/* ============ RENDER DESK ============ */
+function renderDesk(){
+  const a=S.admin;
+  const menus=[
+    ['dashboard','📊','Дашборд'],['accruals','🧾','Начисления'],['payments','💰','Платежи',7],
+    ['requests','🔧','Заявки',3],['meters','📏','Счётчики'],['meetings','📣','Собрания'],
+    ['reports','📈','Отчёты'],['docs','🗂','Документы'],['owners','👥','Собственники'],['archive','🗄','Архив']];
+  let body='';
+  switch(a.screen){
+    case 'dashboard': body=deskDashboard(); break;
+    case 'accruals': body=deskAccruals(); break;
+    case 'payments': body=deskPayments(); break;
+    case 'requests': body=deskRequests(); break;
+    case 'meters': body=deskMeters(); break;
+    case 'meetings': body=deskMeetings(); break;
+    case 'reports': body=deskReports(); break;
+    case 'docs': body=deskDocs(); break;
+    case 'owners': body=deskOwners(); break;
+    case 'archive': body=deskArchive(); break;
+  }
+  document.getElementById('desk-root').innerHTML=`
+    <div class="desk">
+      <div class="sidebar">
+        <div class="brand">${S.tsjNames[S.tsj]}<div>Панель правления</div></div>
+        ${menus.map(m=>`<button class="snav ${a.screen===m[0]?'active':''}" data-dnav="${m[0]}"><span class="ico">${m[1]}</span>${m[2]}${m[3]?`<span class="cnt">${m[3]}</span>`:''}</button>`).join('')}
+        <div class="sb-foot">Председатель: В. Соколова · <a data-dnav="archive" style="color:#6b7686">Журнал действий</a><br>База от 03.11.2026</div>
+      </div>
+      <div class="dmain">${body}</div>
+    </div>`;
+  document.querySelectorAll('#desk-root [data-dnav]').forEach(b=>b.addEventListener('click',()=>{S.admin.screen=b.dataset.dnav; renderDesk();}));
+  wireDesk();
+}
+
+function deskDashboard(){
+  return `
+    <div class="lbl" style="margin-top:0">Оперативная сводка · ноябрь 2026</div>
+    <div class="dtop">
+      <div class="dstat" data-dnav="payments"><div class="l">Сбор платежей</div><div class="v">94,1% <small>▲ 2,3%</small></div></div>
+      <div class="dstat" data-dnav="accruals"><div class="l">Начислено в мес.</div><div class="v">1,24 млн ₽</div></div>
+      <div class="dstat" data-dnav="payments"><div class="l">Задолженность</div><div class="v" style="color:var(--red)">117 тыс ₽</div></div>
+      <div class="dstat" data-dnav="requests"><div class="l">Открытых заявок</div><div class="v">12</div></div>
+    </div>
+    <div class="lbl">Просроченные показания счётчиков</div>
+    <div class="dcard">${meterTable()}
+      <div style="margin-top:10px"><button class="btn ghost sm" data-act="addmeter">＋ Передать показание вручную</button></div>
+    </div>
+    <div class="lbl">Заявки по исполнителям</div>
+    <div class="dcard"><table>
+      <tr><th>№</th><th>Квартира</th><th>Тема</th><th>Исполнитель</th><th>Статус</th></tr>
+      ${S.requests.map(x=>`<tr><td>${x.id}</td><td class="nm">${x.flat}</td><td>${x.title}</td><td>${x.who}</td><td>${badge(x.status==='Закрыта'?'blue':x.status==='Авария'?'red':x.status==='Срок: сб'?'amber':'green',x.status)}</td></tr>`).join('')}
+    </table></div>`;
+}
+function meterTable(){
+  return `<table><tr><th>Квартира</th><th>Счётчик</th><th>Показание</th><th>Статус</th><th>Действие</th></tr>${S.meters.map(m=>
+    `<tr><td class="nm">кв. ${m.flat}</td><td>${m.type}</td><td>${m.val}</td><td>${badge(m.cls,m.status)}</td>
+     <td><div class="td-actions"><a data-act="mremind">Напомнить</a><a data-act="marc">Принять</a></div></td></tr>`).join('')}</table>`;
+}
+function deskAccruals(){
+  return `
+    <div class="lbl" style="margin-top:0">Начисления за ноябрь 2026</div>
+    <div class="dtop">
+      <div class="dstat"><div class="l">Всего начислено</div><div class="v">1 240 500 ₽</div></div>
+      <div class="dstat"><div class="l">Квартир</div><div class="v">86</div></div>
+    </div>
+    <div class="dcard"><table>
+      <tr><th>Квартира</th><th>Начислено</th><th>Оплачено</th><th>Долг</th><th>Пени</th><th></th></tr>
+      <tr><td class="nm">кв. 247</td><td>4 582 ₽</td><td>4 262 ₽</td><td style="color:var(--red)">320 ₽</td><td style="color:var(--arm)">—</td><td><a data-act="billdetail">Открыть</a></td></tr>
+      <tr><td class="nm">кв. 231</td><td>5 910 ₽</td><td>0 ₽</td><td style="color:var(--red)">5 910 ₽</td><td style="color:var(--red)">118 ₽</td><td><a data-act="billdetail">Открыть</a></td></tr>
+      <tr><td class="nm">кв. 233</td><td>3 220 ₽</td><td>3 220 ₽</td><td style="color:var(--green)">0 ₽</td><td>—</td><td><a data-act="billdetail">Открыть</a></td></tr>
+    </table>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn ghost sm" data-act="gen">Сформировать квитанции</button>
+        <button class="btn ghost sm" data-act="recalc">Перерасчёт</button>
+        <button class="btn ghost sm" data-act="peni">💸 Начислить пени</button>
+      </div></div>`;
+}
+function deskPayments(){
+  return `
+    <div class="lbl" style="margin-top:0">Поступления и задолженность</div>
+    <div class="dtop">
+      <div class="dstat"><div class="l">Поступило в нояб.</div><div class="v">1,13 млн ₽</div></div>
+      <div class="dstat"><div class="l">Открытая задолженность</div><div class="v" style="color:var(--red)">117 тыс ₽</div></div>
+    </div>
+    <div class="dcard"><table>
+      <tr><th>Квартира</th><th>Период</th><th>Сумма</th><th>Дата</th><th>Статус</th></tr>
+      <tr><td class="nm">кв. 233</td><td>Ноябрь</td><td>3 220 ₽</td><td>03.11</td><td>${badge('green','Оплачено')}</td></tr>
+      <tr><td class="nm">кв. 247</td><td>Октябрь</td><td>4 262 ₽</td><td>05.10</td><td>${badge('green','Оплачено')}</td></tr>
+      <tr><td class="nm">кв. 231</td><td>Ноябрь</td><td>5 910 ₽</td><td>—</td><td>${badge('red','Долг')}</td></tr>
+    </table>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn ghost sm" data-act="addpay">＋ Внести платеж вручную</button>
+        <button class="btn ghost sm" data-act="recon">Сверить с банком</button>
+      </div></div>`;
+}
+function deskRequests(){
+  return `<div class="lbl" style="margin-top:0">Диспетчеризация заявок</div>
+    <div class="dcard"><table>
+      <tr><th>№</th><th>Квартира</th><th>Тема</th><th>Исполнитель</th><th>Статус</th><th></th></tr>
+      ${S.requests.map(x=>`<tr>
+        <td>${x.id}</td><td class="nm">${x.flat}</td><td>${x.title}</td><td>${x.who}</td>
+        <td>${badge(x.status==='Закрыта'?'blue':x.status==='Авария'?'red':x.status==='Срок: сб'?'amber':'green',x.status)}</td>
+        <td><div class="td-actions"><a data-act="assign">Назначить</a><a data-act="done">Закрыть</a></div></td></tr>`).join('')}
+    </table>
+      <div style="margin-top:10px"><button class="btn ghost sm" data-act="addreq">＋ Завести заявку</button></div></div>`;
+}
+function deskMeters(){
+  return `<div class="lbl" style="margin-top:0">Приём показаний ИПУ</div>
+    <div class="dcard">${meterTable()}
+      <div style="margin-top:10px"><button class="btn ghost sm" data-act="addmeter">＋ Добавить счётчик</button></div></div>
+    <button class="btn ghost sm" data-act="export">Выгрузить отчёт в РСО (демо)</button>`;
+}
+function deskMeetings(){
+  return `<div class="lbl" style="margin-top:0">Общие собрания и голосования</div>
+    <div class="dcard"><table>
+      <tr><th>Вопрос</th><th>Проголосовало</th><th>Статус</th><th></th></tr>
+      <tr><td class="nm">Смета на 2027 год</td><td>81% площади</td><td>${badge('amber','Идёт')}</td><td><a data-act="opensess">Открыть</a></td></tr>
+      <tr><td class="nm">Выбор председателя</td><td>94%</td><td>${badge('green','Завершено')}</td><td><a data-act="prot">Протокол</a></td></tr>
+    </table>
+      <div style="margin-top:10px"><button class="btn ghost sm" data-act="createsess">＋ Создать собрание</button></div></div>`;
+}
+function deskDocs(){
+  return `<div class="lbl" style="margin-top:0">Архив документов</div>
+    <div class="dcard"><table>
+      <tr><th>Документ</th><th>Тип</th><th>Дата</th><th></th></tr>
+      <tr><td class="nm">Протокол ОСС от 20.06.2026</td><td>Протокол</td><td>20.06</td><td><a data-act="prot">Открыть</a></td></tr>
+      <tr><td class="nm">Устав ТСЖ</td><td>Устав</td><td>2019</td><td><a data-act="prot">Открыть</a></td></tr>
+      <tr><td class="nm">Годовой отчёт за 2025</td><td>Отчёт</td><td>март 2026</td><td><a data-act="prot">Открыть</a></td></tr>
+    </table>
+      <div style="margin-top:10px"><button class="btn ghost sm" data-act="addadoc">＋ Загрузить файл</button></div></div>`;
+}
+function deskOwners(){
+  return `<div class="lbl" style="margin-top:0">База собственников</div>
+    <div class="dcard"><table>
+      <tr><th>Квартира</th><th>Собственник</th><th>Площадь</th><th>Контакты</th><th></th></tr>
+      <tr><td class="nm">231</td><td>Петров В. Н.</td><td>48 м²</td><td>+7 9•• ••• 12-34</td><td><a data-act="owndetail">Открыть</a></td></tr>
+      <tr><td class="nm">247</td><td>Иванов П. А.</td><td>24 м²</td><td>+7 9•• ••• 55-67</td><td><a data-act="owndetail">Открыть</a></td></tr>
+      <tr><td class="nm">233</td><td>Сидорова А. И.</td><td>31 м²</td><td>+7 9•• ••• 77-89</td><td><a data-act="owndetail">Открыть</a></td></tr>
+    </table>
+      <div style="margin-top:10px"><button class="btn ghost sm" data-act="addown">＋ Добавить собственника</button></div></div>`;
+}
+function deskArchive(){
+  return `<div class="lbl" style="margin-top:0">Журнал действий (аудит)</div>
+    <div class="dcard"><table>
+      <tr><th>Время</th><th>Пользователь</th><th>Действие</th></tr>
+      <tr><td class="nm">03.11 09:12</td><td>Соколова В.</td><td>Сформированы начисления за ноябрь</td></tr>
+      <tr><td class="nm">02.11 18:40</td><td>Диспетчер</td><td>Назначен исполнитель по заявке №185</td></tr>
+      <tr><td class="nm">01.11 11:05</td><td>Бухгалтер</td><td>Выполнена сверка с банком</td></tr>
+    </table></div>
+    <button class="btn ghost sm" data-act="exportlog">Выгрузить журнал (демо)</button>`;
+}
+function deskReports(){
+  return `
+    <div class="lbl" style="margin-top:0">Отчёты · ноябрь 2026</div>
+    <div class="seg" style="margin-bottom:8px">
+      <button class="btn ghost sm" data-act="rfilter">Период: ноябрь ▾</button>
+      <button class="btn ghost sm" data-act="rfilter">Тариф: текущий ▾</button>
+    </div>
+    <div class="dcard">
+      <h4>Финансовая аналитика · динамика за год</h4>
+      <div class="chart">
+        <div class="chart-col"><div class="chart-bar" style="height:62%;background:var(--brand)"></div><div class="chart-lbl">Янв</div></div>
+        <div class="chart-col"><div class="chart-bar" style="height:70%;background:var(--brand)"></div><div class="chart-lbl">Фев</div></div>
+        <div class="chart-col"><div class="chart-bar" style="height:66%;background:var(--brand)"></div><div class="chart-lbl">Мар</div></div>
+        <div class="chart-col"><div class="chart-bar" style="height:78%;background:var(--brand)"></div><div class="chart-lbl">Апр</div></div>
+        <div class="chart-col"><div class="chart-bar" style="height:74%;background:var(--brand)"></div><div class="chart-lbl">Май</div></div>
+        <div class="chart-col"><div class="chart-bar" style="height:82%;background:var(--brand)"></div><div class="chart-lbl">Июн</div></div>
+        <div class="chart-col"><div class="chart-bar" style="height:80%;background:var(--brand)"></div><div class="chart-lbl">Июл</div></div>
+        <div class="chart-col"><div class="chart-bar" style="height:88%;background:var(--brand)"></div><div class="chart-lbl">Авг</div></div>
+        <div class="chart-col"><div class="chart-bar" style="height:86%;background:var(--brand)"></div><div class="chart-lbl">Сен</div></div>
+        <div class="chart-col"><div class="chart-bar" style="height:92%;background:var(--brand)"></div><div class="chart-lbl">Окт</div></div>
+        <div class="chart-col"><div class="chart-bar" style="height:100%;background:var(--brand)"></div><div class="chart-lbl">Ноя</div></div>
+      </div>
+      <div class="legend"><span><i style="background:var(--brand)"></i> Начислено</span><span><i style="background:var(--green)"></i> Поступило</span></div>
+      <table style="margin-top:12px">
+        <tr><th>Метрика</th><th>Ноя</th><th>Окт</th><th>Тренд</th></tr>
+        <tr><td class="nm">Сбор платежей</td><td>94,1%</td><td>91,8%</td><td><span class="badge green">▲ +2,3 п.п.</span></td></tr>
+        <tr><td class="nm">Задолженность</td><td>117 тыс ₽</td><td>131 тыс ₽</td><td><span class="badge green">▼ −14 тыс</span></td></tr>
+      </table>
+    </div>
+    <div class="dcard">
+      <h4>Финансовые отчёты</h4>
+      <div class="row"><div class="grow"><div class="t">Начислено за период</div><div class="m">по статьям и квартирам</div></div><div class="amt">1,24 млн ₽</div><button class="btn ghost sm" data-act="rgen" style="width:auto">Сформировать</button></div>
+      <div class="row"><div class="grow"><div class="t">Сбор платежей</div><div class="m">поступление vs начисление</div></div><div class="amt">94,1%</div><button class="btn ghost sm" data-act="rgen" style="width:auto">Сформировать</button></div>
+      <div class="row"><div class="grow"><div class="t">Задолженность по квартирам</div><div class="m">список должников и давность</div></div><div class="amt">117 тыс ₽</div><button class="btn ghost sm" data-act="rgen" style="width:auto">Сформировать</button></div>
+    </div>
+    <div class="dcard">
+      <h4>Операционные отчёты</h4>
+      <div class="row"><div class="grow"><div class="t">Заявки и исполнение</div><div class="m">количество, сроки, исполнители</div></div><button class="btn ghost sm" data-act="rgen" style="width:auto">Сформировать</button></div>
+      <div class="row"><div class="grow"><div class="t">Показания счётчиков</div><div class="m">принятые, просрочка, аномалии</div></div><button class="btn ghost sm" data-act="rgen" style="width:auto">Сформировать</button></div>
+    </div>
+    <div class="dcard">
+      <h4>Обязательные</h4>
+      <div class="row"><div class="grow"><div class="t">Годовой отчёт правления</div><div class="m">для общего собрания и жильцов</div></div><button class="btn ghost sm" data-act="rannual" style="width:auto">Открыть</button></div>
+      <div class="row"><div class="grow"><div class="t">Отчёт в РСО / ГИС ЖКХ</div><div class="m">выгрузка для регулятора</div></div><button class="btn ghost sm" data-act="gis" style="width:auto">Выгрузить</button></div>
+      <div class="row"><div class="grow"><div class="t">Сверка с банком</div><div class="m">за последний месяц</div></div><button class="btn ghost sm" data-act="recon" style="width:auto">Сверить</button></div>
+    </div>
+    <div class="dcard">
+      <h4>Управление домом</h4>
+      <div class="row"><div class="grow"><div class="t">Капремонт и подрядчики</div><div class="m">планирование работ и исполнение</div></div><button class="btn ghost sm" data-act="caprepair" style="width:auto">Открыть</button></div>
+      <div class="row"><div class="grow"><div class="t">Опросы жильцов</div><div class="m">анкеты и фото-опросы</div></div><button class="btn ghost sm" data-act="surveys" style="width:auto">Открыть</button></div>
+      <div class="row"><div class="grow"><div class="t">Аудит доступа к данным</div><div class="m">кто и когда просматривал данные</div></div><button class="btn ghost sm" data-act="auditlog" style="width:auto">Открыть</button></div>
+    </div>`;
+}
+</script>
+<script>
+/* ============ WIRE INTERACTIONS ============ */
+function wirePhone(){
+  document.querySelectorAll('#phone-root [data-act]').forEach(b=>b.addEventListener('click',()=>phoneAct(b.dataset.act,b.dataset.id||b.dataset.num||b.dataset.cat)));
+}
+function wireDesk(){
+  document.querySelectorAll('#desk-root [data-act]').forEach(b=>b.addEventListener('click',()=>{ deskAct(b.dataset.act); renderDesk(); }));
+}
+function phoneAct(act, id){
+  const r=S.resident;
+  switch(act){
+    case 'pay':
+      modal(`<h3>Оплата квитанции</h3><div class="m-sub">Ноябрь 2026 · 4 582 ₽</div>
+        <div class="field"><label>Способ оплаты</label><select class="input"><option>Банковская карта</option><option>СБП</option></select></div>
+        <div class="field"><label>Карта</label><input class="input" value="•••• 4242" disabled></div>
+        <div class="modal-actions">
+          <button class="btn ghost" data-mc>Отмена</button>
+          <button class="btn success" data-mcok>Оплатить 4 582 ₽</button>
+        </div>`);
+      modal.querySelector('[data-mcok]').onclick=()=>{ r.pay=true; S.payments.unshift({month:'Ноябрь',amount:4582,date:'Сегодня',status:'Оплачено'}); closeModal(); renderPhone(); toast('Оплата принята ✓','ok'); };
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'billreopen': r.pay=false; renderPhone(); toast('Квитанция возвращена к оплате (демо)','info'); break;
+    case 'billhist': phoneAct('payhist'); break;
+    case 'payhist':
+      modal(`<h3>История платежей</h3><div class="m-sub">Лицевой счёт 247</div>${S.payments.map(p=>`
+        <div class="row"><div class="grow"><div class="t">${p.month} 2026</div><div class="m">${p.date}</div></div><div class="amt">${p.amount} ₽</div>${badge(p.status==='Оплачено'?'green':'red',p.status)}</div>`).join('')}</div>`);
+      break;
+    case 'billarchive': modal(`<h3>Архив квитанций</h3><div class="m-sub">Прошлые периоды · л/с 247</div>
+      <div class="row"><div class="grow"><div class="t">Октябрь 2026</div><div class="m">4 262 ₽ · оплачено</div></div>${badge('green','Оплачено')}<a data-mc>Смотреть</a></div>
+      <div class="row"><div class="grow"><div class="t">Сентябрь 2026</div><div class="m">4 582 ₽ · оплачено</div></div>${badge('green','Оплачено')}<a data-mc>Смотреть</a></div>
+      <div class="row"><div class="grow"><div class="t">Август 2026</div><div class="m">4 390 ₽ · оплачено</div></div>${badge('green','Оплачено')}<a data-mc>Смотреть</a></div>
+      <div class="tip" style="margin-top:10px">Доступны все квитанции с момента заведения лицевого счёта.</div>
+      <div class="modal-actions"><button class="btn" data-mc>Закрыть</button></div>`);
+      modal.querySelectorAll('[data-mc]').forEach(b=>b.onclick=closeModal); break;
+    case 'meterarchive': modal(`<h3>Архив показаний</h3><div class="m-sub">История передачи · счётчики кв. 247</div>
+      <table><tr><th>Период</th><th>ХВС</th><th>ГВС</th><th>Эл/эн.</th></tr>
+      <tr><td class="nm">Ноябрь</td><td>118</td><td>41</td><td>2 480</td></tr>
+      <tr><td class="nm">Октябрь</td><td>113</td><td>39</td><td>2 390</td></tr>
+      <tr><td class="nm">Сентябрь</td><td>107</td><td>36</td><td>2 285</td></tr></table>
+      <div class="tip" style="margin-top:10px">Отклонение более чем на 30% от нормы подсвечивается для проверки.</div>
+      <div class="modal-actions"><button class="btn" data-mc>Закрыть</button></div>`);
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'billsettings': modal(`<h3>Автоплатёж и напоминания</h3><div class="m-sub">Настройки оплаты ЖКУ</div>
+      <div class="row"><div class="grow"><div class="t">Автоплатёж</div><div class="m">списывать при начислении</div></div><span class="badge green">Вкл</span></div>
+      <div class="row"><div class="grow"><div class="t">День списания</div><div class="m">ежемесячно, 20-го числа</div></div></div>
+      <div class="row"><div class="grow"><div class="t">Напоминание о квитанции</div></div><span class="badge green">Вкл</span></div>
+      <div class="row"><div class="grow"><div class="t">Отправлять в календарь</div><div class="m">прикреплять к 20-му числу</div></div></div>
+      <div class="tip" style="margin-top:10px">Настройки демонстрационные. В реальном приложении привязывается карта/СБП.</div>
+      <div class="modal-actions"><button class="btn" data-mc>Закрыть</button></div>`);
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'newreq': modalNewReq(); break;
+    case 'reqdetail': reqDetail(Number(id)); break;
+    case 'addmeter': modalMeter(); break;
+    case 'voteyes':
+      if(r.voted){ toast('Вы уже голосовали','err'); return; }
+      modal(`<h3>Подтверждение голоса</h3><div class="m-sub">Вопрос: утвердить смету на 2027 год<br>Ваш голос — «За», доля 1/86.</div>
+        <div class="modal-actions"><button class="btn ghost" data-mc>Отмена</button><button class="btn success" data-mcok>Подтвердить</button></div>`);
+      modal.querySelector('[data-mcok]').onclick=()=>{ r.voted=true; S.ballots.smeta.pos++; closeModal(); renderPhone(); toast('Голос учтён ✓','ok'); };
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'voteno':
+      if(r.voted){ toast('Вы уже голосовали','err'); return; }
+      S.ballots.smeta.neg++; modal(`<h3>Голос «Против»</h3><div class="m-sub">Вы можете оставить комментарий.</div>
+        <div class="modal-actions"><button class="btn" data-mc=1>Закрыть</button></div>`);
+      modal.querySelector('[data-mc]').onclick=()=>{ closeModal(); toast('Голос учтён (против)','info'); };
+      break;
+    case 'voteagain': r.voted=false; renderPhone(); toast('Голос отозван — голосуйте снова','info'); break;
+    case 'vacate': modal(`<h3>Вопросы ОСС</h3><div class="m-sub">Выберите пункт для просмотра</div>
+      <div class="row"><div class="grow"><div class="t">Утвердить смету на 2027</div></div>${badge('amber','Идёт')}</div>
+      <div class="row"><div class="grow"><div class="t">Переизбрать ревизора</div></div>${badge('green','Завершено')}</div>`); break;
+    case 'editprof': modal(`<h3>Контакты</h3><div class="m-sub">Изменения сохранятся только в демо.</div>
+      <div class="field"><label>Телефон</label><input class="input" value="+7 999 555-67-89"></div>
+      <div class="field"><label>Email</label><input class="input" value="ivanov@mail.ru"></div>
+      <div class="modal-actions"><button class="btn ghost" data-mc>Отмена</button><button class="btn" data-mcok>Сохранить</button></div>`);
+      modal.querySelector('[data-mcok]').onclick=()=>{ closeModal(); toast('Контакты сохранены (демо)','ok'); };
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'businesscard':
+      modal(`<h3>🪪 Онлайн-визитка</h3><div class="m-sub">Иванов П. А. · кв. 247</div>
+        <div class="card" style="margin-bottom:10px">
+          <div class="row"><div class="t">📞 Телефон</div><div class="amt">+7 999 555-67-89</div></div>
+          <div class="row"><div class="t">✉️ Email</div><div class="amt">ivanov@mail.ru</div></div>
+          <div class="row"><div class="t">🏠 Адрес</div><div class="amt">ТСЖ «Шефская», кв. 247</div></div>
+        </div>
+        <div style="text-align:center;margin:0 0 12px">
+          <img src="http://127.0.0.1:8000/cards/ivanov-petr-3460/qr.png" alt="QR-код визитки"
+               style="width:180px;height:180px;border:1px solid var(--line);border-radius:12px"
+               onerror="this.style.display='none';document.getElementById('qr-fallback').style.display='block'">
+          <div id="qr-fallback" style="display:none;font-size:12px;color:var(--muted)">QR недоступен — сервер выключен</div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn ghost" data-mcok>📱 Поделиться визиткой</button>
+          <button class="btn ghost" data-mc>Закрыть</button>
+        </div>`);
+      modal.querySelector('[data-mcok]').onclick=()=>{ shareCard(); };
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'share': modal(`<h3>Передать документ</h3><div class="m-sub">Выберите, куда прикрепить документ.</div>
+      <div class="row"><div class="grow"><div class="t">В заявку №184</div></div><button class="btn sm ghost" data-mcok>Прикрепить</button></div>
+      <div class="row"><div class="grow"><div class="t">В общий архив дома</div></div><button class="btn sm ghost" data-mcok2>Загрузить</button></div>`);
+      modal.querySelector('[data-mcok]').onclick=()=>{ closeModal(); toast('Документ прикреплён к заявке (демо)','ok'); };
+      modal.querySelector('[data-mcok2]').onclick=()=>{ closeModal(); toast('Файл загружен в архив (демо)','ok'); };
+      break;
+    case 'announce': modal(`<h3>Все объявления</h3><div class="m-sub">Лента дома</div>
+      <div class="row"><div class="grow"><div class="t">Общее собрание 12 ноября</div><div class="m">онлайн · 19:00</div></div></div>
+      <div class="row"><div class="grow"><div class="t">Плановая остановка ГВС</div><div class="m">4 ноя · ночь</div></div></div>
+      <div class="row"><div class="grow"><div class="t">Опрос про озеленение двора</div><div class="m">закрыть 10 ноя</div></div></div>`); break;
+    case 'sos':
+      modal(`<h3>🆘 Чрезвычайная ситуация</h3><div class="m-sub">Выберите, какая служба нужна. Ваши данные и адрес (кв. 247) будут переданы оператору.</div>
+        <div class="hot-item" data-sos="112"><div class="grow"><div class="t">Службы экстренные (112)</div></div><b>🚨</b></div>
+        <div class="hot-item" data-sos="101"><div class="grow"><div class="t">Пожар (101)</div></div><b>🔥</b></div>
+        <div class="hot-item" data-sos="103"><div class="grow"><div class="t">Скорая (103)</div></div><b>🚑</b></div>
+        <div class="hot-item" data-sos="104"><div class="grow"><div class="t">Газовая служба (104)</div></div><b>💨</b></div>
+        <div class="modal-actions"><button class="btn ghost" data-mc>Отмена</button></div>`);
+      document.querySelectorAll('[data-sos]').forEach(b=>b.addEventListener('click',()=>{ closeModal(); toast('Вызов на номер '+b.dataset.sos+' (демо) — данные переданы','ok'); }));
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'hot': S.resident.screen='hot'; renderPhone(); break;
+    case 'call': modal(`<h3>Исходящий вызов</h3><div class="m-sub">Диспетчерская/служба</div>
+      <div class="row"><div class="t">Номер</div><div class="amt">${id}</div></div>
+      <div class="tip">В реальном приложении откроется набор номера <b>${id}</b>. В демо — без вызова.</div>
+      <div class="modal-actions"><button class="btn" data-mc>Закрыть</button></div>`);
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'smart': S.resident.screen='smart'; renderPhone(); break;
+    case 'dtopen': toast('Дверь подъезда открыта (демо)','ok'); break;
+    case 'dtsos': toast('Запрос на домофонную связь (демо)','info'); break;
+    case 'dtcode': toast('Код домофона: #1234 (демо)','info'); break;
+    case 'camfull': modal(`<h3>Просмотр камеры</h3><div class="m-sub">Прямая трансляция</div>
+      <div class="cam-preview" style="height:180px">📷<span class="cam-live">LIVE</span></div>
+      <div class="tip">В демо изображение не транслируется. В приложении — видеопоток с камер.</div>
+      <div class="modal-actions"><button class="btn" data-mc>Закрыть</button></div>`);
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'bonus': S.resident.screen='bonus'; renderPhone(); break;
+    case 'bonusspend':
+      modal(`<h3>Списание баллов за ЖКУ</h3><div class="m-sub">Баланс: ${S.bonus?S.bonus.points:1200} баллов (1 = 1 ₽). До 30% начислений.</div>
+        <div class="field"><label>Сумма к оплате баллами</label><input class="input" value="1200"></div>
+        <div class="row"><div class="t">Доступно к списанию</div><div class="amt">1 374 ₽ (30%)</div></div>
+        <div class="modal-actions"><button class="btn ghost" data-mc>Отмена</button><button class="btn success" data-mcok>Списать баллы</button></div>`);
+      modal.querySelector('[data-mcok]').onclick=()=>{ if(!S.bonus) S.bonus={points:1200}; closeModal(); toast('Списано 1200 баллов в счёт оплаты ✓','ok'); };
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'bonushist': toast('История баллов (демо)','info'); break;
+    case 'notify': S.resident.screen='notify'; renderPhone(); break;
+    case 'notifyread': toast('Все уведомления прочитаны (демо)','ok'); break;
+    case 'chat': S.resident.screen='chat'; renderPhone(); break;
+    case 'chatsend': {
+      const inp=document.getElementById('chatmsg');
+      if(!inp||!inp.value.trim()){ toast('Введите сообщение','err'); return; }
+      if(!r.chat) r.chat=[];
+      r.chat.push({who:'me',text:inp.value.trim(),time:'только что'});
+      r.chat.push({who:'them',text:'Принято, спасибо! Ответим в ближайшее время.',time:'только что'});
+      renderPhone();
+      break;
+    }
+    case 'smartevent': S.resident.screen='smartevent'; renderPhone(); break;
+    case 'complaints': S.resident.screen='complaints'; renderPhone(); break;
+    case 'newcomplaint': modal(`<h3>Жалоба на двор</h3><div class="m-sub">Что нужно исправить?</div>
+      <div class="field"><label>Категория</label><select class="input"><option>Парковка</option><option>Мусор/уборка</option><option>Детская площадка</option><option>Освещение</option><option>Другое</option></select></div>
+      <div class="field"><label>Описание</label><textarea class="input" id="comptext" rows="2" placeholder="Опишите проблему"></textarea></div>
+      <div class="modal-actions"><button class="btn ghost" data-mc>Отмена</button><button class="btn" data-mcok>Подать</button></div>`);
+      modal.querySelector('[data-mcok]').onclick=()=>{ closeModal(); toast('Жалоба отправлена правлению ✓','ok'); };
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'photoquiz': S.resident.screen='photoquiz'; renderPhone(); break;
+    case 'quizvote': toast('Ваш голос учтён в опросе ✓','ok'); break;
+    case 'ossarchive': S.resident.screen='ossarchive'; renderPhone(); break;
+    case 'pushdemo': pushBanner(); break;
+    case 'simple': S.resident.screen='simple'; renderPhone(); break;
+    case 'simpMeter': modal(`<h3 style="font-size:22px">Передать показания</h3>
+      <div class="field"><label style="font-size:18px">Счётчик</label><select class="input" style="font-size:20px;padding:14px"><option>ХВС</option><option>ГВС</option><option>Электроэнергия</option></select></div>
+      <div class="field"><label style="font-size:18px">Новое показание</label><input class="input" id="simpval" style="font-size:24px;padding:14px" placeholder="Например 122"></div>
+      <div class="modal-actions"><button class="btn" style="font-size:18px;padding:14px" data-mcok>Отправить</button></div>`);
+      modal.querySelector('[data-mcok]').onclick=()=>{ const v=modal.querySelector('#simpval').value; if(!v){ toast('Введите показание','err'); return; } closeModal(); toast('Показания переданы. Спасибо! ✓','ok'); };
+      break;
+    case 'simpBill': modal(`<h3 style="font-size:22px">Квитанция</h3>
+      <div style="text-align:center;background:#eef4ff;border-radius:12px;padding:18px;margin-bottom:10px">
+        <div style="font-size:15px;color:var(--muted)">К оплате до 20 ноября</div>
+        <div style="font-size:40px;font-weight:800;color:var(--ink)">4 582 ₽</div>
+      </div>
+      <div class="row"><div class="t" style="font-size:18px">Содержание жилья</div><div class="amt" style="font-size:18px">1 240 ₽</div></div>
+      <div class="row"><div class="t" style="font-size:18px">Отопление</div><div class="amt" style="font-size:18px">1 866 ₽</div></div>
+      <div class="row"><div class="t" style="font-size:18px">ХВС по счётчику</div><div class="amt" style="font-size:18px">198 ₽</div></div>
+      <div class="row"><div class="t" style="font-size:18px">Прочие услуги</div><div class="amt" style="font-size:18px">1 278 ₽</div></div>
+      <div class="modal-actions"><button class="btn" style="font-size:18px;padding:14px" data-mc>Закрыть</button></div>`);
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'simpHelp': modal(`<h3 style="font-size:22px">Помощь рядом</h3>
+      <div class="row"><div class="icon" style="background:#dcfce7">📞</div><div class="grow"><div class="t" style="font-size:18px">Диспетчер ТСЖ</div><div class="m" style="font-size:15px">+7 900 000-00-00</div></div><a data-act="call" data-num="+7 900 000-00-00">Позвонить</a></div>
+      <div class="row"><div class="icon" style="background:#dbeafe">👨‍👩‍👧</div><div class="grow"><div class="t" style="font-size:18px">Сосед-помощник (кв. 233)</div><div class="m" style="font-size:15px">Наталья · часы дежурства</div></div><a data-act="call" data-num="+7 900 000-00-01">Позвонить</a></div>
+      <div class="tip" style="font-size:15px;margin-top:8px">Если не получается — всегда есть живой человек на связи.</div>`);
+      break;
+    case 'protview': modal(`<h3>Протокол собрания</h3><div class="m-sub">Просмотр документа</div>
+      <div class="row"><div class="t">Формат</div><div class="amt">PDF</div></div>
+      <div class="row"><div class="t">Доступен собственникам</div><div class="amt">Да</div></div>
+      <div class="tip" style="margin-top:10px">В реальном приложении откроется файл протокола. Демо — без данных.</div>
+      <div class="modal-actions"><button class="btn" data-mc>Закрыть</button></div>`);
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'sensors': toast('Проверка датчиков завершена: все в норме (демо)','ok'); break;
+    case 'wifi': S.resident.screen='wifi'; renderPhone(); break;
+    case 'wifishow': modal(`<h3>Пароль Wi-Fi</h3><div class="m-sub">Сеть ТСЖ «Шефская»</div>
+      <div class="row"><div class="t">Логин</div><div class="amt">TSJ-Shefskaya</div></div>
+      <div class="row"><div class="t">Пароль</div><div class="amt">shef-101-247</div></div>
+      <div class="tip" style="margin-top:10px">Передавайте пароль только жильцам. Гостевая сеть — с отдельным паролем.</div>
+      <div class="modal-actions"><button class="btn" data-mc>Закрыть</button></div>`);
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'wifiguest': modal(`<h3>Гостевой пароль Wi-Fi</h3><div class="m-sub">Временный доступ для гостей</div>
+      <div class="row"><div class="t">Гостевая сеть</div><div class="amt">TSJ-Guest</div></div>
+      <div class="row"><div class="t">Пароль</div><div class="amt">guest-4821</div></div>
+      <div class="row"><div class="t">Действует</div><div class="amt">4 часа</div></div>
+      <div class="modal-actions"><button class="btn ghost" data-mc>Отмена</button><button class="btn success" data-mcok>Создать</button></div>`);
+      modal.querySelector('[data-mcok]').onclick=()=>{ closeModal(); toast('Гостевой пароль создан ✓','ok'); };
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'newcode': modal(`<h3>Временный код доступа</h3><div class="m-sub">Создать одноразовый код для гостя</div>
+      <div class="field"><label>Кому</label><select class="input"><option>Курьер</option><option>Гость</option><option>Сервис</option></select></div>
+      <div class="field"><label>Вход</label><select class="input"><option>Подъезд №1</option><option selected>Подъезд №2</option></select></div>
+      <div class="field"><label>Срок действия</label><select class="input"><option>1 час</option><option selected>До 22:00 сегодня</option><option>1 день</option></select></div>
+      <div class="row"><div class="t">Сгенерированный код</div><div class="amt"># 4821</div></div>
+      <div class="modal-actions"><button class="btn ghost" data-mc>Отмена</button><button class="btn" data-mcok>Создать</button></div>`);
+      modal.querySelector('[data-mcok]').onclick=()=>{ closeModal(); toast('Код #4821 создан и отправлен гостю ✓','ok'); };
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'revokecode': toast('Код доступа отозван (демо)','info'); break;
+    case 'forum': S.resident.screen='forum'; renderPhone(); break;
+    case 'newpost': modal(`<h3>Новая тема</h3><div class="m-sub">Форум/доска объявлений дома</div>
+      <div class="field"><label>Раздел</label><select class="input" id="postcat">
+        <option>Вопросы и услуги</option>
+        <option>Безопасность и соседи</option>
+        <option>Обмен и объявления</option>
+      </select></div>
+      <div class="field"><label>Заголовок</label><input class="input" id="posttitle" placeholder="Тема сообщения"></div>
+      <div class="field"><label>Текст</label><textarea class="input" id="posttext" rows="3" placeholder="Текст объявления"></textarea></div>
+      <div class="modal-actions"><button class="btn ghost" data-mc>Отмена</button><button class="btn" data-mcok>Опубликовать</button></div>`);
+      modal.querySelector('[data-mcok]').onclick=()=>{
+        if(!S.forumPosts) S.forumPosts=[];
+        const cat=modal.querySelector('#postcat').value;
+        const title=modal.querySelector('#posttitle').value.trim()||'Новая тема';
+        const text=modal.querySelector('#posttext').value.trim()||'Текст сообщения';
+        const post={id:Date.now(), section:cat, author:'Иванов П.', flat:247, time:'только что', title:title, text:text, likes:0, replies:[]};
+        S.forumPosts.unshift(post);
+        closeModal(); toast('Тема опубликована в разделе «'+cat+'» ✓','ok');
+      };
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'viewpost':
+      if(!S.forumPosts) S.forumPosts=[];
+      r.forumSel=Number(id); r.screen='forumdetail'; renderPhone(); break;
+    case 'togglecat':
+      if(!S.forumCollapsed) S.forumCollapsed={};
+      S.forumCollapsed[id]=!S.forumCollapsed[id];
+      renderPhone(); break;
+    case 'backforum': r.screen='forum'; renderPhone(); break;
+    case 'likepost': {
+      const x=S.forumPosts.find(p=>p.id===Number(id));
+      if(x){ x.likes=(x.likes||0)+1; toast('Лайк добавлен ✓','ok'); renderPhone(); }
+      break;
+    }
+    case 'replypost': {
+      const x=S.forumPosts.find(p=>p.id===Number(id));
+      const txt=document.getElementById('forumreply');
+      const text=(txt && txt.value.trim())||'Спасибо, учту!';
+      x.replies.push({author:'Иванов П.', flat:247, time:'только что', text:text});
+      toast('Ответ отправлен ✓','ok'); renderPhone(); break;
+    }
+    default: break;
+  }
+}
+function modalNewReq(){
+  const m=modal(`<h3>Новая заявка</h3><div class="m-sub">Опишите проблему</div>
+    <div class="field"><label>Категория</label><select class="input" id="reqcat"><option>Сантехника</option><option>Электрика</option><option>Отопление</option><option>Домофон</option><option>Другое</option></select></div>
+    <div class="field"><label>Тема</label><input class="input" id="reqtitle" placeholder="Например: капает кран"></div>
+    <div class="field"><label>Приоритет</label><select class="input"><option>Обычный</option><option>Срочный</option><option>Аварийный</option></select></div>
+    <div class="modal-actions"><button class="btn ghost" data-mc>Отмена</button><button class="btn" data-mcok>Отправить</button></div>`);
+  m.querySelector('[data-mcok]').onclick=()=>{
+    const title=m.querySelector('#reqtitle').value.trim()||'Новая заявка';
+    const cat=m.querySelector('#reqcat').value;
+    S.requests.unshift({id:180+Math.floor(Math.random()*90)+1, flat:247, title:title+' · '+cat, who:'Не назначен', status:'Новая', when:'сегодня', my:true});
+    closeModal(); renderPhone(); toast('Заявка создана. Диспетчер получил уведомление.','ok');
+  };
+  m.querySelector('[data-mc]').onclick=closeModal;
+}
+function reqDetail(id){
+  const x=S.requests.find(q=>q.id===id);
+  if(!x){ toast('Заявка не найдена','err'); return; }
+  modal(`<h3>Заявка №${x.id}</h3><div class="m-sub">${x.when}</div>
+    <div class="row"><div class="t">Тема</div><div class="amt">${x.title}</div></div>
+    <div class="row"><div class="t">Исполнитель</div><div class="amt">${x.who}</div></div>
+    <div class="row"><div class="t">Статус</div><div class="amt">${badge(x.status==='Закрыта'?'blue':'green',x.status)}</div></div>
+    <div class="row"><div class="t">Хронология</div><div class="amt">создана ${x.when}</div></div>
+    <div class="modal-actions"><button class="btn ghost" data-mc>Понятно</button></div>`);
+  modal.querySelector('[data-mc]').onclick=closeModal;
+}
+function modalMeter(){
+  const m=modal(`<h3>Передача показаний</h3><div class="m-sub">Счётчики квартиры 247</div>
+    <div class="field"><label>Счётчик</label><select class="input"><option>ХВС (текущее 118)</option><option>ГВС (текущее 41)</option><option>Электроэнергия (текущее 2 480)</option></select></div>
+    <div class="field"><label>Новое показание</label><input class="input" id="meterval" placeholder="например 122"></div>
+    <div class="modal-actions"><button class="btn ghost" data-mc>Отмена</button><button class="btn" data-mcok>Передать</button></div>`);
+  m.querySelector('[data-mcok]').onclick=()=>{ const v=m.querySelector('#meterval').value; if(!v){ toast('Введите показание','err'); return; } closeModal(); renderPhone(); toast('Показание передано ✓','ok'); };
+  m.querySelector('[data-mc]').onclick=closeModal;
+}
+
+function shareCard(){
+  const url='http://127.0.0.1:8000/c/ivanov-petr-3460';
+  const text='Моя цифровая визитка: '+url;
+  modal(`<h3>📱 Поделиться визиткой</h3><div class="m-sub">Отправить ссылку на онлайн-визитку</div>
+    <div style="display:flex;gap:6px;margin-bottom:14px">
+      <input class="input" readonly value="${url}" style="flex:1;font-size:12px">
+      <button class="btn sm ghost" data-copylink style="width:auto">Копировать</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:6px">
+      <button class="btn ghost" data-share-mod style="flex:1">✈️ Telegram</button>
+      <button class="btn ghost" data-share-vb style="flex:1">💠 WhatsApp</button>
+      <button class="btn ghost" data-share-vk style="flex:1">📱 VK</button>
+    </div>
+    <div style="display:flex;gap:8px">
+      <a class="btn ghost" href="sms:?body=${encodeURIComponent(text)}" style="flex:1;font-size:13px">💬 SMS</a>
+      <a class="btn ghost" href="mailto:?subject=${encodeURIComponent('Моя визитка')}&body=${encodeURIComponent(text)}" style="flex:1;font-size:13px">✉️ Email</a>
+    </div>
+    <div class="modal-actions"><button class="btn" data-mc>Готово</button></div>`);
+  const mc=modal;
+  mc.querySelector('[data-copylink]').onclick=()=>{
+    const el=mc.querySelector('input');
+    const ok=()=>toast('Ссылка скопирована ✓','ok');
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(el.value).then(ok).catch(()=>{el.select();document.execCommand('copy');ok();}); }
+    else { el.select(); document.execCommand('copy'); ok(); }
+  };
+  const shareClick=(btn)=>btn.addEventListener('click',()=>{ closeModal(); toast('Открыть '+btn.textContent.trim()+' с ссылкой (демо)','info'); });
+  shareClick(mc.querySelector('[data-share-mod]'));
+  shareClick(mc.querySelector('[data-share-vb]'));
+  shareClick(mc.querySelector('[data-share-vk]'));
+  mc.querySelector('[data-mc]').onclick=closeModal;
+}
+
+/* ============ RENDER WORKER (МП исполнителя) ============ */
+function renderWorker(){
+  const w=S.worker;
+  const myJobs=S.requests.filter(x=>x.who && x.who!=='—' && x.status!=='Закрыта');
+  let body='';
+  switch(w.screen){
+    case 'jobs': body=workerJobs(myJobs); break;
+    case 'done': body=workerDone(); break;
+    case 'schedule': body=workerSchedule(); break;
+    case 'profile': body=workerProfile(); break;
+  }
+  const navs=[['jobs','🧰','Задачи'],['done','✅','Выполнено'],['schedule','📅','Смены'],['profile','👤','Профиль']];
+  document.getElementById('worker-root').innerHTML=`
+    <div class="phone">
+      <div class="statusbar">9:41 <span>📶 🔋</span></div>
+      <div class="appnav">
+        <div class="brand">Рабочий кабинет<small>Сантехник · наша бригада</small></div>
+        <div class="avatar" data-w-nav="profile">К</div>
+      </div>
+      <div class="appbody">
+        <div class="hello">Здравствуйте, Кирилл 👷</div>
+        <div class="hint">Сегодня: ${myJobs.length} открытых задач в доме</div>
+        ${body}
+      </div>
+      <div class="bottomnav">${navs.map(n=>`<button class="bn ${w.screen===n[0]?'active':''}" data-w-nav="${n[0]}"><span class="ico">${n[1]}</span>${n[2]}</button>`).join('')}</div>
+    </div>`;
+  document.querySelectorAll('#worker-root [data-w-nav]').forEach(b=>b.addEventListener('click',()=>{S.worker.screen=b.dataset.wNav; renderWorker();}));
+  wireWorker();
+}
+
+function workerJobs(myJobs){
+  const rows=myJobs.map(x=>{
+    const isAva=x.status==='Авария';
+    return `<div class="row">
+      <div class="icon" style="background:${isAva?'#fee2e2':'#e0ecff'}">${isAva?'🚨':'🔧'}</div>
+      <div class="grow">
+        <div class="t">${x.title}</div>
+        <div class="m">№${x.id} · кв. ${x.flat} · ${x.who==='Сантехник К.'?'назначено мне':x.who}</div>
+      </div>
+      ${badge(isAva?'red':'green', isAva?'Авария':'В работе')}
+      <a data-w-act="wdetail" data-id="${x.id}">Детали</a>
+    </div>`;
+  }).join('');
+  return `<div class="card"><h4>Мои задачи и общие</h4>${myJobs.length?rows:`<div class="empty">Нет открытых задач</div>`}</div>
+    <div class="tip">Нажмите «Детали», чтобы взять заявку, зафиксировать фото или закрыть её.</div>`;
+}
+function workerDone(){
+  const closed=S.requests.filter(x=>x.status==='Закрыта');
+  const rows=closed.map(x=>`
+    <div class="row">
+      <div class="icon" style="background:#dcfce7">✅</div>
+      <div class="grow"><div class="t">${x.title}</div><div class="m">№${x.id} · кв. ${x.flat}</div></div>
+      ${badge('blue','Выполнено')}
+    </div>`).join('');
+  return `<div class="card"><h4>Выполненные заявки</h4>${rows||`<div class="empty">Пока ничего не выполнено</div>`}</div>
+    <button class="btn ghost" data-w-act="report">Отчёт за смену (демо)</button>`;
+}
+function workerSchedule(){
+  return `<div class="card"><h4>График бригады</h4>
+    <div class="row"><div class="t">Сегодня · 3 ноя</div><div class="amt">8:00–17:00</div></div>
+    <div class="row"><div class="t">Завтра · 4 ноя</div><div class="amt">8:00–17:00</div></div>
+    <div class="row"><div class="t">Выходной</div><div class="amt">сб · вс</div></div>
+  </div>
+  <div class="row"><div class="t">Аварийная дежурная смена</div><div class="amt">ночь с 4 на 5</div></div>
+  <div class="tip">Смена синхронизируется с правлением: диспетчер видит вашу занятость.</div>`;
+}
+function workerProfile(){
+  return `<div class="card"><h4>Профиль исполнителя</h4>
+    <div class="row"><div class="t">Специальность</div><div class="amt">Сантехник</div></div>
+    <div class="row"><div class="t">Бригада</div><div class="amt">обслуживание дома</div></div>
+    <div class="row"><div class="t">Выполнено за мес.</div><div class="amt">17 заявок</div></div>
+    <div class="row"><div class="t">Оценка жильцов</div><div class="amt">4,8 ★</div></div>
+  </div>
+  <button class="btn ghost" data-w-act="changewho">Показать задачи другой бригады (демо)</button>`;
+}
+
+function wireWorker(){
+  document.querySelectorAll('#worker-root [data-w-act]').forEach(b=>b.addEventListener('click',()=>workerAct(b.dataset.wAct,b.dataset.id)));
+}
+function workerAct(act, id){
+  switch(act){
+    case 'wdetail': {
+      const x=S.requests.find(q=>q.id===Number(id));
+      if(!x){ toast('Заявка не найдена','err'); return; }
+      modal(`<h3>Заявка №${x.id}</h3><div class="m-sub">кв. ${x.flat} · ${x.when}</div>
+        <div class="row"><div class="t">Задача</div><div class="amt">${x.title}</div></div>
+        <div class="row"><div class="t">Текущий статус</div><div class="amt">${badge(x.status==='Авария'?'red':'amber',x.status)}</div></div>
+        <button class="btn success" style="margin-top:10px" data-mc-photo>📷 Добавить фото (демо)</button>
+        <div class="modal-actions">
+          <button class="btn ghost" data-mcassign>Взять в работу</button>
+          <button class="btn success" data-mcdone>Выполнено</button>
+        </div>`);
+      document.querySelectorAll('[data-mcassign],[data-mcdone],[data-mc-photo]').forEach(btn=>btn.addEventListener('click',()=>{
+        if(btn.dataset.mcassign){ x.who='Сантехник К.'; x.status='В работе'; toast('Заявка взята в работу ✓','ok'); }
+        if(btn.dataset.mcdone){ x.status='Закрыта'; toast('Заявка закрыта, жилец уведомлён ✓','ok'); }
+        if(btn.dataset.mcphoto){ toast('Фото прикреплено к заявке (демо)','ok'); }
+        closeModal(); renderWorker(); renderPhone(); renderDesk();
+      }));
+      break;
+    }
+    case 'report': toast('Отчёт за смену отправлен диспетчеру (демо)','ok'); break;
+    case 'changewho': toast('Переключение бригады (демо)','info'); break;
+    default: break;
+  }
+}
+
+/* ============ RENDER BOARD (МП члена правления) ============ */
+function renderBoard(){
+  const b=S.board;
+  let body='';
+  switch(b.screen){
+    case 'home': body=boardHome(); break;
+    case 'fin': body=boardFinance(); break;
+    case 'reqs': body=boardRequests(); break;
+    case 'votes': body=boardVotes(); break;
+    case 'docs': body=boardDocs(); break;
+  }
+  const navs=[['home','🏠','Главная'],['fin','💰','Финансы'],['reqs','🔧','Заявки'],['votes','📣','Собрания'],['docs','🗂','Документы']];
+  document.getElementById('board-root').innerHTML=`
+    <div class="phone">
+      <div class="statusbar">9:41 <span>📶 🔋</span></div>
+      <div class="appnav">
+        <div class="brand">Правление<small>Председатель · В. Соколова</small></div>
+        <div class="avatar" data-b-nav="home">С</div>
+      </div>
+      <div class="appbody">
+        <div class="hello">Здравствуйте, Вера 👋</div>
+        <div class="hint">Оперативная сводка по дому</div>
+        ${body}
+      </div>
+      <div class="bottomnav">${navs.map(n=>`<button class="bn ${b.screen===n[0]?'active':''}" data-b-nav="${n[0]}"><span class="ico">${n[1]}</span>${n[2]}</button>`).join('')}</div>
+    </div>`;
+  document.querySelectorAll('#board-root [data-b-nav]').forEach(el=>el.addEventListener('click',()=>{S.board.screen=el.dataset.bNav; renderBoard();}));
+  wireBoard();
+}
+
+function boardHome(){
+  return `
+    <div class="grid2">
+      <div class="metric"><div class="lbl">Сбор платежей</div><div class="val ok">94,1%</div><div class="sub2">▲ 2,3% к окт.</div></div>
+      <div class="metric"><div class="lbl">Открытых заявок</div><div class="val">12</div><div class="sub2">из них 1 аварийная</div></div>
+      <div class="metric"><div class="lbl">Задолженность</div><div class="val neg">117 тыс ₽</div><div class="sub2">11 квартир</div></div>
+      <div class="metric"><div class="lbl">Показания приняты</div><div class="val">79%</div><div class="sub2">из 86 квартир</div></div>
+    </div>
+    <button class="btn" data-b-act="fin">💰 К финансам</button>
+    <div style="height:10px"></div>
+    <button class="btn ghost" data-b-act="newan">📣 Опубликовать объявление</button>
+    <div style="height:14px"></div>
+    <div class="card">
+      <h4>Требует внимания</h4>
+      <div class="row">
+        <div class="icon" style="background:#fee2e2">🚨</div>
+        <div class="grow"><div class="t">Подтопление подвала</div><div class="m">заявка №186 · кв. 231</div></div>
+        ${badge('red','Авария')}
+      </div>
+      <div class="row">
+        <div class="icon" style="background:#fef3c7">⏰</div>
+        <div class="grow"><div class="t">Смета не утверждена</div><div class="m">голосование до 12 ноя</div></div>
+        ${badge('amber','Срочно')}
+      </div>
+    </div>`;
+}
+function boardFinance(){
+  return `
+    <div class="seg" style="margin-bottom:6px">
+      <div class="unit-tile"><div class="big">1,24 млн</div><div class="ml">начислено</div></div>
+      <div class="unit-tile"><div class="big ok">1,13 млн</div><div class="ml">поступило</div></div>
+    </div>
+    <div class="card">
+      <h4>За ноябрь 2026</h4>
+      <div class="row"><div class="t">Содержание жилья</div><div class="amt">412 тыс ₽</div></div>
+      <div class="row"><div class="t">Коммунальные (перерасчёт)</div><div class="amt">698 тыс ₽</div></div>
+      <div class="row"><div class="t">Капремонт</div><div class="amt">96 тыс ₽</div></div>
+      <div class="row"><div class="t">Прочее</div><div class="amt">34 тыс ₽</div></div>
+    </div>
+    <button class="btn ghost" data-b-act="recon">Сверить с банком (демо)</button>
+    <div style="height:8px"></div>
+    <button class="btn ghost" data-b-act="report">Годовой отчёт (демо)</button>`;
+}
+function boardRequests(){
+  const open=S.requests.filter(x=>x.status!=='Закрыта');
+  const rows=open.map(x=>`
+    <div class="row">
+      <div class="icon" style="background:${x.status==='Авария'?'#fee2e2':'#e0ecff'}">${x.status==='Авария'?'🚨':'🔧'}</div>
+      <div class="grow"><div class="t">${x.title}</div><div class="m">№${x.id} · кв. ${x.flat} · ${x.who}</div></div>
+      ${badge(x.status==='Авария'?'red':x.status==='Срок: сб'?'amber':'green', x.status)}
+      <a data-b-act="bdetail" data-id="${x.id}">Открыть</a>
+    </div>`).join('');
+  return `<button class="btn" data-b-act="reqmap">🗺 Диспетчерская карта (демо)</button>
+    <div style="height:12px"></div>
+    <div class="card"><h4>Открытые заявки</h4>${rows||`<div class="empty">Нет открытых заявок</div>`}</div>`;
+}
+function boardVotes(){
+  return `
+    <div class="card">
+      <h4>Смета на 2027 год · ОСС</h4>
+      <div class="fake-bar"></div>
+      <div class="hint" style="margin:4px 0 10px">Кворум 81% · голосов «За» 74%</div>
+      <div class="row"><div class="t">Завершить голосование</div><div class="amt">12 ноя</div></div>
+      <button class="btn ghost" style="margin-top:10px" data-b-act="closevote">Завершить досрочно (демо)</button>
+    </div>
+    <div class="card">
+      <h4>Голосования правления</h4>
+      <div class="row"><div class="grow"><div class="t">Ремонт кровли: подрядчик</div></div>${badge('amber','Идёт')}</div>
+      <div class="row"><div class="grow"><div class="t">Тариф на содержание на 2027</div></div>${badge('green','Завершено')}</div>
+    </div>`;
+}
+function boardDocs(){
+  return `
+    <div class="card">
+      <h4>Требующие подписи</h4>
+      <div class="row"><div class="grow"><div class="t">Протокол ОСС от 20.06</div></div>${badge('red','Не подписан')}</div>
+      <div class="row"><div class="grow"><div class="t">Согласие на ремонт кровли</div></div>${badge('amber','На согласовании')}</div>
+    </div>
+    <div class="card">
+      <h4>Общая папка</h4>
+      <div class="row"><div class="grow"><div class="t">Устав ТСЖ</div></div><a data-b-act="bopen">Открыть</a></div>
+      <div class="row"><div class="grow"><div class="t">Годовой отчёт за 2025</div></div><a data-b-act="bopen">Открыть</a></div>
+      <div class="row"><div class="grow"><div class="t">Смета на 2026</div></div><a data-b-act="bopen">Открыть</a></div>
+    </div>`;
+}
+
+function wireBoard(){
+  document.querySelectorAll('#board-root [data-b-act]').forEach(el=>el.addEventListener('click',()=>boardAct(el.dataset.bAct, el.dataset.id)));
+}
+function boardAct(act, id){
+  switch(act){
+    case 'fin': S.board.screen='fin'; renderBoard(); break;
+    case 'newan': modal(`<h3>Новое объявление</h3><div class="m-sub">Будет показано жильцам дома</div>
+      <div class="field"><label>Текст</label><input class="input" value="Уважаемые жильцы! Напоминаем о собрании 12 ноября."></div>
+      <div class="modal-actions"><button class="btn" data-mc>Опубликовать (демо)</button></div>`);
+      modal.querySelector('[data-mc]').onclick=()=>{closeModal(); toast('Объявление опубликовано ✓','ok');};
+      break;
+    case 'recon': toast('Сверка с банком: расхождений нет','ok'); break;
+    case 'report': toast('Годовой отчёт сформирован (демо)','ok'); break;
+    case 'reqmap': toast('Карта заявок по подъездам (демо)','info'); break;
+    case 'bdetail': {
+      const x=S.requests.find(q=>q.id===Number(id));
+      if(!x){ toast('Заявка не найдена','err'); return; }
+      modal(`<h3>Заявка №${x.id}</h3><div class="m-sub">кв. ${x.flat} · ${x.when}</div>
+        <div class="row"><div class="t">Тема</div><div class="amt">${x.title}</div></div>
+        <div class="row"><div class="t">Исполнитель</div><div class="amt">${x.who}</div></div>
+        <div class="row"><div class="t">Статус</div><div class="amt">${badge(x.status==='Закрыта'?'blue':'amber',x.status)}</div></div>
+        <div class="modal-actions"><button class="btn ghost" data-mcpress>Напомнить</button><button class="btn ghost" data-mc>Закрыть</button></div>`);
+      const btn=modal.querySelector('[data-mcpress]'); if(btn) btn.onclick=()=>{closeModal(); toast('Напоминание исполнителю отправлено','ok');};
+      modal.querySelector('[data-mc]').onclick=closeModal;
+      break;
+    }
+    case 'closevote': toast('Голосование завершено досрочно (демо)','ok'); break;
+    case 'bopen': toast('Открытие документа (демо)','info'); break;
+    default: break;
+  }
+}
+
+/* ============ DESK ACTIONS ============ */
+function deskAct(act){
+  switch(act){
+    case 'addmeter': case 'gen': case 'recalc':
+      toast('Начисления сформированы (демо)', 'ok'); break;
+    case 'peni': toast('Пени начислены за 3 кв. (демо) · 118 ₽ включено в квитанцию','ok'); break;
+    case 'caprepair': modal(`<h3>Капремонт: планирование</h3><div class="m-sub">Плановые работы на 2027</div>
+      <div class="row"><div class="grow"><div class="t">Ремонт кровли</div><div class="m">подрядчик: «Строй-М» · срок: март</div></div>${badge('amber','На торгах')}</div>
+      <div class="row"><div class="grow"><div class="t">Замена лифта</div><div class="m">фонд сбора · 8,4% накоплено</div></div>${badge('red','Недофинанс.')}</div>
+      <div class="row"><div class="grow"><div class="t">Ремонт входной группы</div><div class="m">в смете на 2027</div></div>${badge('blue','План')}</div>
+      <div class="modal-actions"><button class="btn ghost" data-mc>Создать задачу подрядчику</button><button class="btn" data-mc>Закрыть</button></div>`);
+      modal.querySelectorAll('[data-mc]').forEach(b=>b.onclick=closeModal); break;
+    case 'surveys': modal(`<h3>Опросы жильцов</h3><div class="m-sub">Запустить анкету или фото-опрос</div>
+      <div class="row"><div class="grow"><div class="t">Цвет лавочек во дворе</div></div>${badge('blue','Завершён')}</div>
+      <div class="row"><div class="grow"><div class="t">Режим работы детской площадки</div></div>${badge('amber','Идёт')}</div>
+      <div class="tag-row" style="margin-top:10px"><button class="btn ghost sm" data-mc>＋ Создать опрос</button></div>`);
+      modal.querySelectorAll('[data-mc]').forEach(b=>b.onclick=closeModal); break;
+    case 'auditlog': modal(`<h3>Аудит доступа к данным</h3><div class="m-sub">Кто и когда просматривал данные жильцов</div>
+      <div class="row"><div class="t">Соколова В. — кв. 247</div><div class="amt">сегодня 09:12</div></div>
+      <div class="row"><div class="t">Бухгалтер — кв. 231</div><div class="amt">вчера 17:40</div></div>
+      <div class="row"><div class="t">Диспетчер — заявка №186</div><div class="amt">2 ноя 11:05</div></div>
+      <div class="modal-actions"><button class="btn" data-mc>Закрыть</button></div>`);
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'gis': toast('Отчёт выгружен в ГИС ЖКХ ✓','ok'); break;
+    case 'addpay': toast('Платёж внесён вручную (демо)','ok'); break;
+    case 'recon': toast('Сверка с банком завершена: расхождений нет','ok'); break;
+    case 'addreq': toast('Заявка заведена (демо)','ok'); break;
+    case 'assign': toast('Исполнитель назначен (демо)','ok'); break;
+    case 'done': toast('Заявка закрыта (демо)','ok'); break;
+    case 'export': case 'exportlog': toast('Файл сформирован и выгружен (демо)','ok'); break;
+    case 'mremind': toast('Напоминание отправлено жильцу (демо)','info'); break;
+    case 'marc': toast('Показание принято (демо)','ok'); break;
+    case 'opensess': modal(`<h3>Собрание: Смета на 2027 год</h3><div class="m-sub">Онлайн · завершается 12 ноя</div>
+      <div class="row"><div class="grow"><div class="t">Приняло участие</div></div><div class="amt">81% площади</div></div>
+      <div class="row"><div class="grow"><div class="t">Голосов «За»</div></div><div class="amt">74%</div></div>
+      <div class="modal-actions"><button class="btn ghost" data-mc>Закрыть</button></div>`);
+      modal.querySelector('[data-mc]').onclick=closeModal; break;
+    case 'createsess': toast('Мастер создания собрания (демо)','info'); break;
+    case 'prot': toast('Просмотр протокола (демо)','info'); break;
+    case 'addadoc': toast('Окно загрузки файла (демо)','info'); break;
+    case 'owndetail': toast('Карточка собственника (демо)','info'); break;
+    case 'addown': toast('Форма добавления собственника (демо)','info'); break;
+    case 'billdetail': toast('Карточка начислений (демо)','info'); break;
+    case 'rfilter': toast('Выбор периода/тарифа (демо)','info'); break;
+    case 'rgen': toast('Отчёт сформирован и выгружен (демо)','ok'); break;
+    case 'rannual': toast('Открытие годового отчёта правления (демо)','info'); break;
+    default: break;
+  }
+}
+
+/* ============ ROLE SWITCH ============ */
+document.querySelectorAll('.role-tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.role-tab').forEach(x=>x.classList.toggle('on',x===t));
+  const role=t.dataset.role;
+  document.getElementById('wrap-resident').style.display = role==='resident' ? 'block' : 'none';
+  document.getElementById('wrap-worker').style.display = role==='worker' ? 'block' : 'none';
+  document.getElementById('wrap-board').style.display = role==='board' ? 'block' : 'none';
+  document.getElementById('wrap-admin').style.display = role==='admin' ? 'block' : 'none';
+  if(role==='admin'){
+    document.getElementById('desk-root').scrollIntoView({behavior:'smooth'});
+  }
+  const map={resident:'Режим жильца — мобильное приложение',worker:'Режим исполнителя — мобильное приложение',board:'Режим члена правления — мобильное приложение',admin:'Режим правления — веб-панель'};
+  toast(map[role]||'','info');
+}));
+
+/* ============ TSJ SWITCH ============ */
+document.querySelectorAll('.tsj-tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.tsj-tab').forEach(x=>x.classList.toggle('on',x===t));
+  S.tsj=t.dataset.tsj;
+  document.getElementById('intro-tsj').textContent=S.tsjNames[S.tsj];
+  renderPhone(); renderWorker(); renderBoard(); renderDesk();
+  toast('Выбран дом: '+S.tsjNames[S.tsj]+'','ok');
+}));
+
+document.getElementById('reset-btn').addEventListener('click',()=>{ S={tsj:'101',tsjNames:{ '101':'ТСЖ «Шефская, 101»', '103':'ТСЖ «Шефская» (дом 103)' },resident:{screen:'home',pay:false,voted:false},admin:{screen:'dashboard'},worker:{screen:'jobs'},board:{screen:'home'},requests:[
+  {id:184,flat:247,title:'Капает кран на кухне',who:'Сантехник К.',status:'В работе',when:'28 окт',my:true},
+  {id:185,flat:230,title:'Не открывается домофон',who:'Электрик Д.',status:'Срок: сб',when:'2 ноя',my:false},
+  {id:186,flat:231,title:'Подтопление подвала',who:'—',status:'Авария',when:'3 ноя',my:false},
+  {id:181,flat:247,title:'Не горит лампа в подъезде',who:'Электрик Д.',status:'Закрыта',when:'20 окт',my:true}],
+  meters:[{flat:232,type:'ГВС',val:'—',status:'Просрочено 5 дн.',cls:'red'},{flat:234,type:'Эл/энергия',val:'2 480',status:'Отклонение +41%',cls:'amber'},{flat:233,type:'ХВС',val:'118',status:'Принято',cls:'green'}],
+  ballots:{smeta:{pos:0,neg:0}},payments:[{month:'Октябрь',amount:4262,date:'05 окт',status:'Оплачено'},{month:'Сентябрь',amount:4582,date:'02 сен',status:'Оплачено'}]};
+  renderPhone(); renderWorker(); renderBoard(); renderDesk(); toast('Прототип сброшен к исходному состоянию','ok'); });
+
+/* ============ THEME (светлая/тёмная/системная) ============ */
+(function(){
+  var select=document.getElementById('theme-select');
+  var opts=document.querySelectorAll('[data-theme-opt]');
+  function apply(theme){
+    if(theme==='system') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', theme);
+    if(select) select.value=theme;
+    opts.forEach(function(b){ b.classList.toggle('on', b.dataset.themeOpt===theme); });
+    try{ localStorage.setItem('tsj-theme', theme); }catch(e){}
+  }
+  var saved='system';
+  try{ saved=localStorage.getItem('tsj-theme')||'system'; }catch(e){}
+  apply(saved);
+  if(select) select.addEventListener('change', function(){ apply(select.value); });
+  opts.forEach(function(b){ b.addEventListener('click', function(){ apply(b.dataset.themeOpt); }); });
+})();
+
+/* ============ LARGE MODE (крупный шрифт) ============ */
+(function(){
+  var largBtn=document.getElementById('large-mode');
+  function applyLarge(on){
+    document.documentElement.classList.toggle('large-mode', on);
+    if(largBtn) largBtn.classList.toggle('on', on);
+    try{ localStorage.setItem('tsj-large', on?'1':'0'); }catch(e){}
+  }
+  var savedLarge=false;
+  try{ savedLarge=localStorage.getItem('tsj-large')==='1'; }catch(e){}
+  applyLarge(savedLarge);
+  if(largBtn) largBtn.addEventListener('click', function(){ applyLarge(!document.documentElement.classList.contains('large-mode')); });
+})();
+
+renderPhone();
+renderWorker();
+renderBoard();
+renderDesk();
+
+/* ============ ENTRY / ВЫБОР РОЛИ ============ */
+(function(){
+  var START_KEY='tsj-started';
+  var started=false;
+  try{ started=localStorage.getItem(START_KEY)==='1'; }catch(e){}
+  if(started) return; // после первого входа показываем прототип сразу
+  var root=document.getElementById('phone-root');
+  if(!root) return;
+  var roleNames={resident:'Жилец',worker:'Исполнитель',board:'Член правления',admin:'Правление'};
+  var boxes=Object.entries(roleNames).map(function(e,ix){
+    var icons=['🏠','🔧','🕴','🏛'];
+    return '<button class="role-entry" data-entry="'+e[0]+'"><div class="re-ico">'+icons[ix]+'</div><div class="re-name">'+e[1]+'</div></button>';
+  }).join('');
+  root.innerHTML='<div class="entry-overlay">'+
+    '<div class="entry-card">'+
+      '<div style="font-size:26px;margin-bottom:2px">🏠</div>'+
+      '<h2 style="margin:0 0 4px">Добро пожаловать!</h2>'+
+      '<p class="entry-sub">Выберите роль, чтобы посмотреть демо</p>'+
+      '<div class="entry-grid">'+boxes+'</div>'+
+      '<button class="btn ghost" id="entry-close" style="margin-top:12px">Смотреть всё без входа</button>'+
+    '</div></div>';
+  function pick(role){
+    var tab=document.querySelector('.role-tab[data-role="'+role+'"]');
+    if(tab) tab.click();
+    try{ localStorage.setItem(START_KEY,'1'); }catch(e){}
+  }
+  root.querySelectorAll('[data-entry]').forEach(function(b){ b.addEventListener('click', function(){ pick(b.dataset.entry); }); });
+  root.querySelector('#entry-close').addEventListener('click', function(){
+    try{ localStorage.setItem(START_KEY,'1'); }catch(e){}
+    renderPhone();
+  });
+})();
+</script>
+</body>
+</html>
