@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ТСЖ «Шефская» — выбор дома</title>
+<meta name="description" content="Информационно-аналитические справки ТСЖ Шефская 101 и Шефская 103 (Екатеринбург). Выберите свой дом.">
+<style>
+  :root{
+    --bg:#f1f5f9; --panel:#ffffff; --panel2:#e2e8f0; --ink:#0f172a; --muted:#64748b;
+    --line:#cbd5e1; --up:#059669; --down:#dc2626; --warn:#b45309; --accent:#0284c7; --violet:#7c3aed;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0f172a; --panel:#1e293b; --panel2:#273549; --ink:#e2e8f0; --muted:#94a3b8;
+      --line:#334155; --up:#34d399; --down:#f87171; --warn:#fbbf24; --accent:#38bdf8; --violet:#a78bfa;
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#f1f5f9; --panel:#ffffff; --panel2:#e2e8f0; --ink:#0f172a; --muted:#64748b;
+    --line:#cbd5e1; --up:#059669; --down:#dc2626; --warn:#b45309; --accent:#0284c7; --violet:#7c3aed;
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#273549; --ink:#e2e8f0; --muted:#94a3b8;
+    --line:#334155; --up:#34d399; --down:#f87171; --warn:#fbbf24; --accent:#38bdf8; --violet:#a78bfa;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .wrap{max-width:560px;width:100%;text-align:center}
+  .badge{display:inline-block;background:var(--panel2);border:1px solid var(--line);color:var(--muted);padding:5px 14px;border-radius:999px;font-size:13px;letter-spacing:.5px;margin-bottom:18px}
+  h1{font-size:26px;margin:0 0 8px;line-height:1.2}
+  .lead{color:var(--muted);font-size:15px;margin:0 0 30px;line-height:1.6}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .door{display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px 20px;text-decoration:none;color:var(--ink);transition:transform .12s ease,box-shadow .2s ease,border-color .2s}
+  .door:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,.12);border-color:var(--accent)}
+  .icon{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:26px}
+  .door.a .icon{background:#dbeafe;color:#0369a1}
+  .door.b .icon{background:#ddd6fe;color:#6d28d9}
+  :root[data-theme="dark"] .door.a .icon{background:#0c4a6e;color:#7dd3fc}
+  :root[data-theme="dark"] .door.b .icon{background:#4c1d95;color:#c4b5fd}
+  .door .name{font-weight:700;font-size:17px}
+  .door .desc{color:var(--muted);font-size:13px;line-height:1.5}
+  .hint{color:var(--muted);font-size:13px;margin-top:26px;line-height:1.5}
+  .theme-toggle{position:absolute;top:20px;right:20px;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:13px}
+  @media (max-width:480px){.grid{grid-template-columns:1fr}.theme-toggle{position:static;margin:0 0 16px}}
+</style>
+</head>
+<body>
+  <button type="button" class="theme-toggle" id="themeToggle">☰ Оформление</button>
+  <div class="wrap">
+    <div class="badge">Информационно-аналитические справки · ТСЖ · Екатеринбург</div>
+    <h1>Выберите свой дом</h1>
+    <p class="lead">Справка по вашему ТСЖ: финансы, протоколы, проекты улучшений и макет будущего приложения.</p>
+    <div class="grid">
+      <a class="door a" href="dashboard-tsj-shefskaya-101.html">
+        <div class="icon">101</div>
+        <div class="name">Шефская, 101</div>
+        <div class="desc">Информационно-аналитическая справка</div>
+      </a>
+      <a class="door b" href="dashboard-tsj-shefskaya-103.html">
+        <div class="icon">103</div>
+        <div class="name">Шефская, 103</div>
+        <div class="desc">Информационно-аналитическая справка</div>
+      </a>
+    </div>
+    <p class="hint">Выберите дом, чтобы открыть справку. Переключатель «Оформление» меняет тему страницы.</p>
+  </div>
+<script>
+(function(){
+  var root=document.documentElement;
+  var THEMES=[
+    {key:'auto',icon:'◐',label:'Системная',attr:null},
+    {key:'light',icon:'☀',label:'Светлая',attr:'light'},
+    {key:'dark',icon:'☾',label:'Тёмная',attr:'dark'}
+  ];
+  function themeIndex(key){for(var i=0;i<THEMES.length;i++){if(THEMES[i].key===key)return i;}return 0;}
+  function applyTheme(key){
+    var th=THEMES[themeIndex(key)];
+    if(th.attr===null){root.removeAttribute('data-theme');}else{root.setAttribute('data-theme',th.attr);}
+    var bt=document.getElementById('themeToggle');
+    if(bt){bt.textContent=(th.icon+' '+th.label);}
+  }
+  var savedTheme='auto';try{savedTheme=localStorage.getItem('tsjSiteTheme')||'auto';}catch(e){}
+  applyTheme(savedTheme);
+  var order=['auto','light','dark'];
+  var btn=document.getElementById('themeToggle');
+  if(btn){
+    btn.addEventListener('click',function(){
+      var idx=order.indexOf(savedTheme);idx=(idx+1)%order.length;savedTheme=order[idx];
+      applyTheme(savedTheme);
+      try{localStorage.setItem('tsjSiteTheme',savedTheme);}catch(e){}
+    });
+  }
+})();
+</script>
+</body>
+</html>
