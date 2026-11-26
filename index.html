@@ -3,106 +3,1235 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ТСЖ «Шефская» — выбор дома</title>
-<meta name="description" content="Информационно-аналитические справки ТСЖ Шефская 101 и Шефская 103 (Екатеринбург). Выберите свой дом.">
-<!-- Яндекс.Метрика -->
-<script type="text/javascript">
-  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-   m[i].l=1*new Date();
-   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-   var YANDEX_METRIKA_ID = 114122886;
-   ym(YANDEX_METRIKA_ID, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true });
-   window.yandexMetrikaReady = true;
-</script>
-<noscript><div><img src="https://mc.yandex.ru/watch/114122886" style="position:absolute; left:-9999px;" alt=""></div></noscript>
+<title>Интерактивный дашборд ТСЖ — Шефская, 101 и Шефская, 103</title>
 <style>
   :root{
-    --bg:#f1f5f9; --panel:#ffffff; --panel2:#e2e8f0; --ink:#0f172a; --muted:#64748b;
+    --bg:#f1f5f9; --panel:#ffffff; --panel2:#e2e8f0; --ink:#0f172a; --muted:#475569;
     --line:#cbd5e1; --up:#059669; --down:#dc2626; --warn:#b45309; --accent:#0284c7; --violet:#7c3aed;
+    --shadow:0 4px 16px rgba(15,23,42,.06);
   }
   @media (prefers-color-scheme: dark){
     :root{
-      --bg:#0f172a; --panel:#1e293b; --panel2:#273549; --ink:#e2e8f0; --muted:#94a3b8;
+      --bg:#0b1120; --panel:#162032; --panel2:#1e293b; --ink:#f1f5f9; --muted:#94a3b8;
       --line:#334155; --up:#34d399; --down:#f87171; --warn:#fbbf24; --accent:#38bdf8; --violet:#a78bfa;
+      --shadow:0 6px 20px rgba(0,0,0,.35);
     }
   }
   :root[data-theme="light"]{
-    --bg:#f1f5f9; --panel:#ffffff; --panel2:#e2e8f0; --ink:#0f172a; --muted:#64748b;
+    --bg:#f1f5f9; --panel:#ffffff; --panel2:#e2e8f0; --ink:#0f172a; --muted:#475569;
     --line:#cbd5e1; --up:#059669; --down:#dc2626; --warn:#b45309; --accent:#0284c7; --violet:#7c3aed;
+    --shadow:0 4px 16px rgba(15,23,42,.06);
   }
   :root[data-theme="dark"]{
-    --bg:#0f172a; --panel:#1e293b; --panel2:#273549; --ink:#e2e8f0; --muted:#94a3b8;
+    --bg:#0b1120; --panel:#162032; --panel2:#1e293b; --ink:#f1f5f9; --muted:#94a3b8;
     --line:#334155; --up:#34d399; --down:#f87171; --warn:#fbbf24; --accent:#38bdf8; --violet:#a78bfa;
+    --shadow:0 6px 20px rgba(0,0,0,.35);
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-  .wrap{max-width:560px;width:100%;text-align:center}
-  .badge{display:inline-block;background:var(--panel2);border:1px solid var(--line);color:var(--muted);padding:5px 14px;border-radius:999px;font-size:13px;letter-spacing:.5px;margin-bottom:18px}
-  h1{font-size:26px;margin:0 0 8px;line-height:1.2}
-  .lead{color:var(--muted);font-size:15px;margin:0 0 30px;line-height:1.6}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  .door{display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px 20px;text-decoration:none;color:var(--ink);transition:transform .12s ease,box-shadow .2s ease,border-color .2s}
-  .door:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,.12);border-color:var(--accent)}
-  .icon{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:26px}
-  .door.a .icon{background:#dbeafe;color:#0369a1}
-  .door.b .icon{background:#ddd6fe;color:#6d28d9}
-  :root[data-theme="dark"] .door.a .icon{background:#0c4a6e;color:#7dd3fc}
-  :root[data-theme="dark"] .door.b .icon{background:#4c1d95;color:#c4b5fd}
-  .door .name{font-weight:700;font-size:17px}
-  .door .desc{color:var(--muted);font-size:13px;line-height:1.5}
-  .hint{color:var(--muted);font-size:13px;margin-top:26px;line-height:1.5}
-  .theme-toggle{position:absolute;top:20px;right:20px;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:13px}
-  @media (max-width:480px){.grid{grid-template-columns:1fr}.theme-toggle{position:static;margin:0 0 16px}}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5;font-size:15px}
+  .wrap{max-width:1220px;margin:0 auto;padding:20px 16px 70px}
+
+  /* Header & Controls */
+  header.top{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-bottom:18px;box-shadow:var(--shadow);position:relative}
+  .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:10px}
+  .btn-chip{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:6px 13px;cursor:pointer;font-size:12.5px;font-weight:600;transition:all .15s}
+  .btn-chip:hover{border-color:var(--accent);color:var(--accent)}
+  h1{font-size:24px;margin:0 0 6px;line-height:1.25}
+  .sub{color:var(--muted);font-size:13.5px;margin:0 0 12px}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .badge{display:inline-flex;align-items:center;gap:5px;background:var(--panel2);border:1px solid var(--line);color:var(--accent);padding:4px 11px;border-radius:999px;font-size:12px;font-weight:600}
+
+  /* House Switcher & Sticky Nav */
+  .switcher-bar{position:sticky;top:8px;z-index:50;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:20px;box-shadow:var(--shadow);display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+  .house-pills{display:flex;gap:6px;flex-wrap:wrap}
+  .hpill{border:1px solid var(--line);background:var(--panel2);color:var(--ink);padding:8px 14px;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer;transition:all .15s}
+  .hpill.active{background:var(--accent);color:#0f172a;border-color:var(--accent)}
+  .quick-links{display:flex;gap:6px;flex-wrap:wrap}
+  .qlink{font-size:12.5px;color:var(--muted);text-decoration:none;padding:5px 9px;border-radius:8px;font-weight:600}
+  .qlink:hover{background:var(--panel2);color:var(--accent)}
+
+  /* Sections */
+  .house-block{display:none}
+  .house-block.visible{display:block;animation:fadeIn .25s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  .sec-head{margin:30px 0 12px;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;border-bottom:2px solid var(--line);padding-bottom:6px}
+  .sec-head h2{margin:0;font-size:19px}
+  .sec-head span{font-size:12.5px;color:var(--muted)}
+
+  /* KPI Grid */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:12px;margin-bottom:20px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);transition:transform .15s}
+  .kpi:hover{transform:translateY(-2px)}
+  .kpi .label{font-size:12px;color:var(--muted);font-weight:600}
+  .kpi .value{font-size:24px;font-weight:800;margin:4px 0 2px}
+  .kpi .note{font-size:12px;color:var(--muted)}
+  .up{color:var(--up)} .down{color:var(--down)} .warn{color:var(--warn)}
+
+  /* Panels & Charts */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:820px){.grid-2{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:16px;box-shadow:var(--shadow)}
+  .panel h3{margin:0 0 10px;font-size:15.5px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .chart-wrap{position:relative;width:100%}
+  svg.chart{width:100%;height:auto;display:block;overflow:visible}
+  svg text{fill:var(--muted);font-size:11px}
+  .gridline{stroke:var(--line);stroke-width:1;stroke-dasharray:3 3}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:8px;font-size:12px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .swatch{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .tooltip{position:fixed;pointer-events:none;z-index:999;background:var(--ink);color:var(--bg);padding:6px 10px;border-radius:8px;font-size:12px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.25);opacity:0;transition:opacity .12s}
+
+  /* Interactive Controls inside Panels */
+  .filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center}
+  .search-inp{background:var(--bg);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:7px 12px;font-size:13px;min-width:210px;flex:1}
+  .fbtn{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:6px 11px;font-size:12.5px;font-weight:600;cursor:pointer}
+  .fbtn.active{background:var(--accent);color:#0f172a;border-color:var(--accent)}
+
+  /* Tables */
+  .tbl-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{color:var(--muted);font-weight:700;background:var(--panel2);cursor:pointer;user-select:none;white-space:nowrap}
+  th:hover{color:var(--accent)}
+  td.num,th.num{text-align:right;white-space:nowrap}
+  tr:hover td{background:rgba(2,132,199,.04)}
+
+  /* Callouts & Pills */
+  .callout{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:12px 15px;margin:12px 0}
+  .callout.ok{border-left-color:var(--up)} .callout.warn{border-left-color:var(--warn)} .callout.danger{border-left-color:var(--down)}
+  .callout p{margin:0 0 5px} .callout p:last-child{margin:0}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap}
+  .pill.high{background:rgba(220,38,38,.15);color:var(--down)}
+  .pill.med{background:rgba(180,83,9,.15);color:var(--warn)}
+  .pill.low{background:rgba(5,150,105,.15);color:var(--up)}
+
+  /* Calculators & Checklists */
+  .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center}
+  @media(max-width:720px){.calc-grid{grid-template-columns:1fr}}
+  .slider-row{margin:10px 0}
+  .slider-row label{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px}
+  input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
+  .calc-res{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .calc-res .big{font-size:22px;font-weight:800;color:var(--up);margin:4px 0}
+
+  .chk-item{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--bg);cursor:pointer;transition:opacity .15s}
+  .chk-item input{width:17px;height:17px;margin-top:2px;accent-color:var(--up);cursor:pointer}
+  .chk-item.done{opacity:.65;text-decoration:line-through}
+  .prog-bar{height:10px;background:var(--panel2);border-radius:999px;overflow:hidden;margin:8px 0 14px;border:1px solid var(--line)}
+  .prog-fill{height:100%;background:var(--up);width:0%;transition:width .25s}
+
+  /* Details */
+  details{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:12px 0;box-shadow:var(--shadow)}
+  summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--accent);outline:none}
+  details[open] summary{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  ul.clean{margin:6px 0;padding-left:20px}
+  ul.clean li{margin:5px 0}
+  .sec-head, .house-block > .sec-head { scroll-margin-top: 76px; }
+  footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media print {
+    @page {
+      margin: 12mm 14mm;
+    }
+    html, body {
+      background: #ffffff !important;
+      color: #0f172a !important;
+      font-size: 11pt !important;
+      line-height: 1.45 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .wrap {
+      max-width: 100% !important;
+      width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    .switcher-bar, .top-actions, .filter-bar, .tooltip, input[type="range"] {
+      display: none !important;
+    }
+    .house-block {
+      display: block !important;
+    }
+    /* Заголовки разделов всегда начинают новую секцию без отрыва от контента */
+    #view-103, #view-compare, #sec-board-rec, #sec-glossary {
+      break-before: page;
+      page-break-before: always;
+    }
+    h1, h2, h3, h4, .sec-head {
+      break-after: avoid !important;
+      page-break-after: avoid !important;
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+    /* Запрет разрыва абзацев, карточек, выносок, строк таблиц и графиков на стыке страниц */
+    p, li, .kpi, .callout, .panel, .chart-wrap, svg.chart, .calc-res, .chk-item, details, tr, thead, tbody {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+    /* Разрешаем перенос между строками длинных таблиц и списков, но запрещаем внутри одной строки/абзаца */
+    table {
+      break-inside: auto !important;
+      page-break-inside: auto !important;
+      width: 100% !important;
+      font-size: 9.5pt !important;
+    }
+    thead {
+      display: table-header-group;
+    }
+    .tbl-wrap {
+      overflow: visible !important;
+    }
+    /* Адаптация сеток под ширину листа A4/A3 (книжная и альбомная ориентация) */
+    .grid-2, .calc-grid {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 10px !important;
+    }
+    .kpis {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 8px !important;
+    }
+    @media print and (max-width: 215mm) {
+      /* Для книжного А4 перестраиваем 2-колоночные графики и таблицы в 1 колонку, чтобы не сжимались */
+      .grid-2, .calc-grid {
+        grid-template-columns: 1fr !important;
+      }
+      .kpis {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+    header.top, .panel, .kpi, .callout, details, .calc-res, .chk-item {
+      background: #ffffff !important;
+      color: #0f172a !important;
+      border: 1px solid #cbd5e1 !important;
+      box-shadow: none !important;
+      padding: 10px 12px !important;
+      margin-bottom: 10px !important;
+    }
+    .callout.ok { border-left: 4px solid #059669 !important; }
+    .callout.warn { border-left: 4px solid #b45309 !important; }
+    .callout.danger { border-left: 4px solid #dc2626 !important; }
+    /* Раскрываем все сворачиваемые блоки <details> при печати, чтобы не терять скрытый текст */
+    details > *:not(summary) {
+      display: block !important;
+    }
+  }
 </style>
+<!-- Яндекс.Метрика -->
+<script type="text/javascript">
+  var YANDEX_METRIKA_ID = 114122886;
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/114122886" style="position:absolute; left:-9999px;" alt=""></div></noscript>
 </head>
 <body>
-  <button type="button" class="theme-toggle" id="themeToggle">☰ Оформление</button>
-  <div class="wrap">
-    <div class="badge">Информационно-аналитические справки · ТСЖ · Екатеринбург</div>
-    <h1>Выберите свой дом</h1>
-    <p class="lead">Справка по вашему ТСЖ: финансы, протоколы, проекты улучшений и макет будущего приложения.</p>
-    <div class="grid">
-      <a class="door a" href="dashboard-tsj-shefskaya-101.html">
-        <div class="icon">101</div>
-        <div class="name">Шефская, 101</div>
-        <div class="desc">Информационно-аналитическая справка</div>
-      </a>
-      <a class="door b" href="dashboard-tsj-shefskaya-103.html">
-        <div class="icon">103</div>
-        <div class="name">Шефская, 103</div>
-        <div class="desc">Информационно-аналитическая справка</div>
-      </a>
+<div class="tooltip" id="tip"></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="top-actions">
+      <button type="button" class="btn-chip" id="themeBtn">💻 Тема: Системная</button>
+      <button type="button" class="btn-chip" onclick="window.print()">🖨 Печать / PDF</button>
     </div>
-    <p class="hint">Выберите дом, чтобы открыть справку. Переключатель «Оформление» меняет тему страницы.</p>
+    <h1>Интерактивная аналитическая панель ТСЖ</h1>
+    <p class="sub">г. Екатеринбург · ул. Шефская, 101 (ТСЖ «Шефская, 101») и ул. Шефская, 103 (ТСЖ «Шефская»)</p>
+    <div class="meta-row">
+      <span class="badge">📅 Актуальность данных: 06–07.11.2026</span>
+      <span class="badge">⚖ Информационно-аналитический обзор (не аудит и не юрзаключение)</span>
+      <span class="badge">🔒 Обезличено по 152-ФЗ</span>
+    </div>
+  </header>
+
+  <div class="switcher-bar">
+    <div class="house-pills" role="tablist">
+      <button type="button" class="hpill active" data-view="101">🏢 Дом 101 — Шефская, 101</button>
+      <button type="button" class="hpill" data-view="103">🏢 Дом 103 — Шефская, 103</button>
+      <button type="button" class="hpill" data-view="compare">⚖ Сравнение 101 и 103</button>
+    </div>
+    <div class="quick-links">
+      <a class="qlink" href="#sec-charts">Графики</a>
+      <a class="qlink" href="#sec-contracts">Договоры</a>
+      <a class="qlink" href="#sec-calc">Калькулятор резервов</a>
+      <a class="qlink" href="#sec-roadmap">Дорожная карта</a>
+      <a class="qlink" href="#sec-board-rec">Рекомендации правлению</a>
+      <a class="qlink" href="#sec-risks">Риски</a>
+      <a class="qlink" href="#sec-glossary">Словарь и 152-ФЗ</a>
+    </div>
   </div>
+
+  <!-- ==================== ВКЛАДКА: ДОМ 101 ==================== -->
+  <div class="house-block visible" id="view-101">
+    <div class="kpis">
+      <div class="kpi"><div class="label">Председатель правления</div><div class="value">действующий председатель правления (с 04.08.2022)</div><div class="note">с 04.08.2022 · ранее предыдущий председатель правления</div></div>
+      <div class="kpi"><div class="label">Чистый финрезультат (2025)</div><div class="value up">+0,32 млн ₽</div><div class="note">323 тыс. ₽ (2024: −66 тыс. ₽)</div></div>
+      <div class="kpi"><div class="label">Активы по балансу (2025)</div><div class="value">9,4 млн ₽</div><div class="note">9 370 тыс. ₽ (капитал 7 699 тыс.)</div></div>
+      <div class="kpi"><div class="label">Остаток целевых средств</div><div class="value up">4,7 млн ₽</div><div class="note">4 693 тыс. ₽ (+70% к 2024 г.)</div></div>
+      <div class="kpi"><div class="label">Дебиторка / Спецсчёт КР</div><div class="value warn">4,1 / 5,1 млн ₽</div><div class="note">4 099 тыс. / 5 133 тыс. ₽ (2025)</div></div>
+    </div>
+
+    <div class="sec-head" id="sec-charts">
+      <h2>Интерактивные графики и динамика (2019–2025)</h2>
+      <span>Наведите курсор или коснитесь столбца/точки для точных значений</span>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <h3>Чистый финансовый результат (тыс. ₽)</h3>
+        <div class="chart-wrap"><svg class="chart" id="svg-101-profit" viewBox="0 0 540 230"></svg></div>
+        <p style="font-size:12px;color:var(--muted);margin:8px 0 0">Выручка ТСЖ не раскрывается (взносы не признаются выручкой). Весомый вклад вносят проценты по депозитам.</p>
+      </div>
+      <div class="panel">
+        <h3>Активы, капитал и денежные средства (тыс. ₽)</h3>
+        <div class="chart-wrap"><svg class="chart" id="svg-101-assets" viewBox="0 0 540 230"></svg></div>
+        <div class="legend">
+          <span><i class="swatch" style="background:var(--accent)"></i>Активы (баланс)</span>
+          <span><i class="swatch" style="background:var(--violet)"></i>Собственный капитал</span>
+          <span><i class="swatch" style="background:var(--up)"></i>Денежные средства</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <h3>Дебиторская и кредиторская задолженность (тыс. ₽)</h3>
+        <div class="chart-wrap"><svg class="chart" id="svg-101-debt" viewBox="0 0 540 230"></svg></div>
+        <div class="legend">
+          <span><i class="swatch" style="background:var(--down)"></i>Дебиторка (долги жителей)</span>
+          <span><i class="swatch" style="background:var(--muted)"></i>Кредиторка (долги ТСЖ)</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Целевое использование средств за 2025 г. (тыс. ₽)</h3>
+        <div class="tbl-wrap">
+          <table>
+            <tbody>
+              <tr><td>Остаток целевых средств на начало 2025 г.</td><td class="num">2 754</td></tr>
+              <tr><td>Целевые взносы (поступило за год)</td><td class="num">11 182</td></tr>
+              <tr><td><strong>Поступило средств — всего</strong></td><td class="num up"><strong>11 457</strong></td></tr>
+              <tr><td>Расходы на целевые мероприятия</td><td class="num">(9 085)</td></tr>
+              <tr><td>— в т.ч. содержание аппарата управления</td><td class="num">(158)</td></tr>
+              <tr><td>— в т.ч. прочие (субсидия/иное)</td><td class="num">(275)</td></tr>
+              <tr><td><strong>Использовано средств — всего</strong></td><td class="num down"><strong>(9 518)</strong></td></tr>
+              <tr><td><strong>Остаток целевых средств на конец 2025 г.</strong></td><td class="num up"><strong>4 693</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin:8px 0 0">Резервный и иные целевые фонды на 31.12.2025 — <strong>3 006</strong> тыс. ₽; взнос на капремонт за 2025 г. — <strong>1 786</strong> тыс. ₽.</p>
+      </div>
+    </div>
+
+    <div class="callout ok"><p><strong>Сильная сторона:</strong> устойчивая организация с растущим остатком целевых средств (+70% за 2025 г.), валютой баланса 9,37 млн ₽, нулевыми основными средствами и отсутствием исполнительных производств.</p></div>
+    <div class="callout warn"><p><strong>Пробел в корпоративных документах:</strong> протокол избрания действующего председателя правления председателем (запись в ЕГРЮЛ — 04.08.2022) в архиве не подтверждён; 15.11.2021 из ЕГРЮЛ удалены записи о 90 учредителях — требуется ведение реестра членов ТСЖ.</p></div>
+
+    <div class="sec-head" id="sec-contracts">
+      <h2>Реестр договоров, операторов и аутсорсинга (дом 101)</h2>
+      <span>Используйте поиск и фильтры по категориям</span>
+    </div>
+
+    <div class="panel">
+      <div class="filter-bar">
+        <input type="text" class="search-inp" id="search-101" placeholder="🔍 Поиск по контрагенту, договору или услуге...">
+        <button type="button" class="fbtn active" data-cat-101="all">Все (13)</button>
+        <button type="button" class="fbtn" data-cat-101="telecom">Операторы связи (8)</button>
+        <button type="button" class="fbtn" data-cat-101="service">Подрядчики и УК (5)</button>
+      </div>
+      <div class="tbl-wrap">
+        <table id="tbl-101">
+          <thead><tr><th>Категория</th><th>Контрагент</th><th>Договор</th><th>Услуга / предмет</th><th class="num">Ставка / доход 2025</th><th>Решение / аутсорс</th></tr></thead>
+          <tbody>
+            <tr data-cat="telecom"><td><span class="pill low">Оператор</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Телевидение / связь</td><td class="num">[сумма скрыта]</td><td>Пересмотр на ОСС (⅔ голосов)</td></tr>
+            <tr data-cat="telecom"><td><span class="pill low">Оператор</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Интернет</td><td class="num">[сумма скрыта] ·[сумма скрыта]</td><td>Пересмотр на ОСС</td></tr>
+            <tr data-cat="telecom"><td><span class="pill low">Оператор</span></td><td>[наименование контрагента скрыто]</td><td>—</td><td>Интернет / ТВ</td><td class="num">[сумма скрыта]</td><td>Сверить договор и тариф</td></tr>
+            <tr data-cat="telecom"><td><span class="pill low">Оператор</span></td><td>[наименование контрагента скрыто]</td><td>—</td><td>Связь / интернет</td><td class="num">[сумма скрыта]</td><td>Сверить договор и тариф</td></tr>
+            <tr data-cat="telecom"><td><span class="pill low">Оператор</span></td><td>[наименование контрагента скрыто]</td><td>—</td><td>Интернет / ТВ</td><td class="num">[сумма скрыта]</td><td>Сверить договор и тариф</td></tr>
+            <tr data-cat="telecom"><td><span class="pill low">Оператор</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Интернет, телефония, ТВ (рост ≤15%/год)</td><td class="num">[сумма скрыта] · в прочих</td><td>Индексация / ОСС</td></tr>
+            <tr data-cat="telecom"><td><span class="pill low">Оператор</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Интернет + КТВ</td><td class="num">[сумма скрыта] · в прочих</td><td>Пересмотр на ОСС</td></tr>
+            <tr data-cat="telecom"><td><span class="pill low">Оператор</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Интернет, телефония, IP-TV</td><td class="num">[сумма скрыта] · в прочих</td><td>Пересмотр на ОСС</td></tr>
+            <tr data-cat="service"><td><span class="pill med">Подрядчик</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Обращение с ТКО (регоператор)</td><td class="num">по единому тарифу</td><td>Нельзя в штат (регоператор)</td></tr>
+            <tr data-cat="service"><td><span class="pill med">Подрядчик</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Техосвидетельствование 4 лифтов</td><td class="num">[сумма скрыта]</td><td>Нельзя в штат (лицензия)</td></tr>
+            <tr data-cat="service"><td><span class="pill med">Подрядчик</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Бухучёт, начисление платежей</td><td class="num">абон. плата (автопролонг)</td><td>Невыгодно в штат; тендер</td></tr>
+            <tr data-cat="service"><td><span class="pill med">Подрядчик</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Регистрационный учёт граждан</td><td class="num">возмездно (автопролонг)</td><td>Оставить</td></tr>
+            <tr data-cat="service"><td><span class="pill med">УК / аутсорс</span></td><td>[наименование контрагента скрыто]</td><td>ранее</td><td>Вспомогательные функции: бухучёт, ТО</td><td class="num">по договору</td><td>Пересмотреть объём на тендере</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sec-head" id="sec-calc">
+      <h2>Интерактивный калькулятор финансовых резервов (дом 101)</h2>
+      <span>Оцените эффект от актуализации тарифов операторов, взыскания долгов и тендеров</span>
+    </div>
+
+    <div class="panel">
+      <div class="calc-grid">
+        <div>
+          <div class="slider-row">
+            <label><span>Новая средняя ставка с 1 оператора (сейчас [сумма скрыта]):</span><span id="c101-op-val">[сумма скрыта]</span></label>
+            <input type="range" id="c101-op" min="1000" max="12000" step="500" value="5000">
+          </div>
+          <div class="slider-row">
+            <label><span>Доля взыскания дебиторской задолженности (от 4 099 тыс. ₽):</span><span id="c101-debt-val">30%</span></label>
+            <input type="range" id="c101-debt" min="0" max="80" step="5" value="30">
+          </div>
+          <div class="slider-row">
+            <label><span>Экономия на тендерах подрядчиков (от базы ~1,9 млн ₽/год):</span><span id="c101-ten-val">10%</span></label>
+            <input type="range" id="c101-ten" min="0" max="20" step="1" value="10">
+          </div>
+        </div>
+        <div class="calc-res">
+          <div style="font-size:13px;color:var(--muted)">Дополнительный доход от 8 операторов (сверх[сумма скрыта]):</div>
+          <div class="big" id="c101-res-op">+[сумма скрыта]</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:8px">Возврат живых денег из дебиторской задолженности:</div>
+          <div class="big" id="c101-res-debt">+1 229 700 ₽</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:8px">Экономия на подрядчиках + суммарный эффект 1-го года:</div>
+          <div class="big" id="c101-res-tot">+1 829 130 ₽</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-head" id="sec-roadmap">
+      <h2>Интерактивный трекер дорожной карты (дом 101)</h2>
+      <span>Отмечайте выполненные шаги — прогресс сохраняется в браузере</span>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700">
+        <span>Прогресс выполнения мероприятий дорожной карты</span>
+        <span id="prog-101-txt">0 из 16 выполнено (0%)</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-101-bar"></div></div>
+      <div id="chk-101-list"></div>
+    </div>
+
+    <div class="sec-head" id="sec-risks">
+      <h2>Матрица рисков, реквизиты и протоколы (дом 101)</h2>
+      <span>Нажмите на интересующий блок, чтобы раскрыть детали</span>
+    </div>
+
+    <details open>
+      <summary>Реквизиты ТСЖ «Шефская, 101» и связи руководителя</summary>
+      <ul class="clean">
+        <li><strong>ОГРН / ИНН / КПП:</strong> [реквизиты ТСЖ скрыты] · [ОКВЭД скрыт] · СФР [реквизиты ТСЖ скрыты].</li>
+        <li><strong>Адрес и ИФНС:</strong> 620135, Свердловская обл., г. Екатеринбург, ул. Шефская, 101 · Межрайонная ИФНС №32.</li>
+        <li><strong>Контакты:</strong> [телефоны и e-mail скрыты — см. раздел контактов ГИС ЖКХ]; УК на аутсорсе: [наименование контрагента скрыто] (<code>[e-mail УК — см. сайт УК]</code>).</li>
+        <li><strong>Сведения о связанных организациях руководителя (по данным ЕГРЮЛ):</strong> учредитель/гендиректор [наименование контрагента скрыто] (мягкая кровля, Шефская 101, кв. [скрыто]), [наименование контрагента скрыто] (СМР, Шефская 101, офис [скрыто]), [наименование контрагента скрыто] (с 07.07.2017 — клининг дома 103). [регламент сделок со связанными лицами — см. устав ТСЖ].</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>Архив протоколов ОСС / ОСЧ / правления (2006–2022)</summary>
+      <ul class="clean">
+        <li><strong>Протокол №1 [номер договора скрыт]:</strong> создание ТСЖ «Шефская, 101», Устав, правление ([состав правления — ФИО скрыты по 152-ФЗ]), ревкомиссия ([состав ревизионной комиссии — ФИО скрыты по 152-ФЗ]); кворум — 102 голоса (67,84%).</li>
+        <li><strong>Протокол ОСЧ «МОП» [номер договора скрыт]:</strong> отчёт [наименование контрагента скрыто] за 2007 г., финплан 2008 г., вознаграждение председателя, охрана МОП, аренда общего имущества; кворум — 130 участников (84,88%).</li>
+        <li><strong>Протокол правления [номер договора скрыт]:</strong> избрание председателем правления предыдущего председателя правления ([номер договора скрыт] членов, 100%).</li>
+        <li><strong>Протокол №[номер договора скрыт] ОСЧ [номер договора скрыт]:</strong> отчёт за 2021 г., продление и избрание правления (в т.ч. действующий председатель правления (с 04.08.2022), кв. [скрыто]), ревкомиссия, Устав в новой редакции (регистрация в ЕГРЮЛ 04.08.2022); кворум — 64,34%.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>Штрафы КоАП РФ, ГК РФ, ТК РФ и УК РФ для председателя и ТСЖ</summary>
+      <ul class="clean">
+        <li><strong>ст. 7.22 КоАП РФ (содержание дома):</strong> должностное лицо 4 000–5 000 ₽, ТСЖ 40 000–50 000 ₽, повтор — дисквалификация (в 6 из 14 проверок с 2015 г. были нарушения).</li>
+        <li><strong>ст. 7.23 КоАП РФ (коммунальные услуги):</strong> должностное лицо 500–1 000 ₽, ТСЖ 5 000–10 000 ₽.</li>
+        <li><strong>ст. 20.4 КоАП РФ (пожарная безопасность):</strong> должностное лицо 20 000–30 000 ₽, ТСЖ 300 000–400 000 ₽ (при пожаре — до 800 000 ₽ / приостановка).</li>
+        <li><strong>ст. 15.11 КоАП РФ (бухучёт):</strong> 5 000–10 000 ₽, повтор — 10 000–20 000 ₽ или дисквалификация.</li>
+        <li><strong>ст. 13.11 КоАП РФ (персональные данные):</strong> ч. 1 — должностное лицо 50 000–100 000 ₽, ТСЖ 150 000–300 000 ₽; повтор (ч. 1.1) — 100 000–200 000 ₽ / 300 000–500 000 ₽.</li>
+        <li><strong>ст. 13.19.2 КоАП РФ (ГИС ЖКХ):</strong> должностное лицо 5 000–10 000 ₽, повтор — 15 000–20 000 ₽.</li>
+        <li><strong>ст. 19.5 / 19.7 КоАП РФ (предписания / сведения):</strong> 1 000–2 000 ₽ (ТСЖ 10 000–20 000 ₽) / 300–500 ₽ (ТСЖ 3 000–5 000 ₽).</li>
+        <li><strong>ст. 53, 53.1 ГК РФ, ст. 277 ТК РФ, ст. 159, 160 УК РФ:</strong> возмещение убытков по сделкам с заинтересованностью без одобрения ОСС, субсидиарная и материальная ответственность.</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- ==================== ВКЛАДКА: ДОМ 103 ==================== -->
+  <div class="house-block" id="view-103">
+    <div class="kpis">
+      <div class="kpi"><div class="label">Председатель правления</div><div class="value">действующий председатель правления (с 30.11.2021)</div><div class="note">с 30.11.2021 · ранее предыдущий председатель правления</div></div>
+      <div class="kpi"><div class="label">Целевые взносы (2025)</div><div class="value up">15,8 млн ₽</div><div class="note">15 832 тыс. ₽ (+10% к 2024: 14,3 млн)</div></div>
+      <div class="kpi"><div class="label">Дебиторская задолженность</div><div class="value down">4,3 млн ₽</div><div class="note">4 316 тыс. ₽ (+67% г/г, максимум 7 лет)</div></div>
+      <div class="kpi"><div class="label">Фонд капремонта (II кв. 2026)</div><div class="value up">13,3 млн ₽</div><div class="note">13 313 тыс. ₽ (рост в 2,3× с 2019 г.)</div></div>
+      <div class="kpi"><div class="label">Проценты по депозитам (2025)</div><div class="value">1,36 млн ₽</div><div class="note">1 355 тыс. ₽ (≈92% финрезультата)</div></div>
+    </div>
+
+    <div class="sec-head" id="sec-103-charts">
+      <h2>Интерактивные графики ТСЖ «Шефская» — дом 103 (2018–2026)</h2>
+      <span>Наведите курсор или коснитесь графика для точных сумм</span>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <h3>Целевые взносы и расходы за год (тыс. ₽)</h3>
+        <div class="chart-wrap"><svg class="chart" id="svg-103-ie" viewBox="0 0 540 230"></svg></div>
+        <div class="legend">
+          <span><i class="swatch" style="background:var(--accent)"></i>Целевые взносы</span>
+          <span><i class="swatch" style="background:var(--violet)"></i>Расходы за год</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Фонд капитального ремонта на спецсчёте (тыс. ₽)</h3>
+        <div class="chart-wrap"><svg class="chart" id="svg-103-kr" viewBox="0 0 540 230"></svg></div>
+        <p style="font-size:12px;color:var(--muted);margin:8px 0 0">По данным ГИС ЖКХ: рост с 5 777 тыс. ₽ (2019) до 13 313 тыс. ₽ (II кв. 2026).</p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <h3>Дебиторка и кредиторка (тыс. ₽, 2019–2025)</h3>
+        <div class="chart-wrap"><svg class="chart" id="svg-103-debt" viewBox="0 0 540 230"></svg></div>
+        <div class="legend">
+          <span><i class="swatch" style="background:var(--down)"></i>Дебиторка (2025: сч.76 2,9 млн + авансы 1,4 млн)</span>
+          <span><i class="swatch" style="background:var(--muted)"></i>Кредиторка</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Остаток целевых средств и финрезультат (тыс. ₽)</h3>
+        <div class="chart-wrap"><svg class="chart" id="svg-103-res" viewBox="0 0 540 230"></svg></div>
+        <div class="legend">
+          <span><i class="swatch" style="background:var(--up)"></i>Остаток целевых средств</span>
+          <span><i class="swatch" style="background:var(--warn)"></i>Финрезультат (коммерч. деят.)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout danger"><p><strong>Слабое место №1:</strong> дебиторка достигла 4,3 млн ₽ (2025) — максимум за 7 лет (+67% за год); в 2022 г. резерв целевых средств падал до 792 тыс. ₽ из-за разовых трат на капремонт.</p></div>
+    <div class="callout warn"><p><strong>Пробел в ГИС ЖКХ:</strong> протокол избрания председателя действующий председатель правления (с 30.11.2021) (запись в ЕГРЮЛ — 30.11.2021) не опубликован; протоколы [номер договора скрыт] ОСЧ и [номер договора скрыт] ОСС имеют пометку о спорном кворуме.</p></div>
+
+    <div class="sec-head" id="sec-103-contracts">
+      <h2>Реестр договоров, операторов и подрядчиков (дом 103)</h2>
+      <span>Поиск и фильтрация по категориям</span>
+    </div>
+
+    <div class="panel">
+      <div class="filter-bar">
+        <input type="text" class="search-inp" id="search-103" placeholder="🔍 Поиск по контрагенту, договору или ставке...">
+        <button type="button" class="fbtn active" data-cat-103="all">Все (18)</button>
+        <button type="button" class="fbtn" data-cat-103="telecom">Операторы связи (7)</button>
+        <button type="button" class="fbtn" data-cat-103="service">Подрядчики и УК (11)</button>
+      </div>
+      <div class="tbl-wrap">
+        <table id="tbl-103">
+          <thead><tr><th>Категория</th><th>Контрагент</th><th>Договор</th><th>Предмет</th><th class="num">Плата / срок</th><th>Статус / оценка</th></tr></thead>
+          <tbody>
+            <tr data-cat="telecom"><td><span class="pill low">Оператор</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Интернет + ТВ</td><td class="num">[сумма скрыта]</td><td>Ставка с 2009</td></tr>
+            <tr data-cat="telecom"><td><span class="pill low">Оператор</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Интернет / ТВ / телефония</td><td class="num">[сумма скрыта]</td><td>Ставка с 2009</td></tr>
+            <tr data-cat="telecom"><td><span class="pill low">Оператор</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Интернет</td><td class="num">[сумма скрыта]</td><td>Ставка с 2007</td></tr>
+            <tr data-cat="telecom"><td><span class="pill low">Оператор</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт] (2007)</td><td>ТВ</td><td class="num">[сумма скрыта]</td><td>Ставка с 2007</td></tr>
+            <tr data-cat="telecom"><td><span class="pill low">Оператор</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>КТВ + интернет</td><td class="num">[сумма скрыта]</td><td>Допсогл. 2012</td></tr>
+            <tr data-cat="telecom"><td><span class="pill low">Оператор</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Телеком, 3,9 кв. м</td><td class="num">[сумма скрыта]</td><td>Ставка с 2006</td></tr>
+            <tr data-cat="telecom"><td><span class="pill low">Оператор</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт] (2008)</td><td>Интернет</td><td class="num">[сумма скрыта]</td><td>Ставка с 2008</td></tr>
+            <tr data-cat="service"><td><span class="pill high">Подрядчик</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Техэксплуатация инженерных систем</td><td class="num">[сумма скрыта]</td><td>Автопролонг + рост платы, пени 0,2%/день</td></tr>
+            <tr data-cat="service"><td><span class="pill med">Подрядчик</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Аварийное обслуживание (ночь/выходные)</td><td class="num">[сумма скрыта]</td><td>Частично дублирует [наименование контрагента скрыто]</td></tr>
+            <tr data-cat="service"><td><span class="pill med">Подрядчик</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>ТО лифтов</td><td class="num">[сумма скрыта]</td><td>Автопролонг (нужна лицензия)</td></tr>
+            <tr data-cat="service"><td><span class="pill med">[статус уточняется]</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Клининг</td><td class="num">[сумма скрыта]</td><td>Автопролонг; можно в штат (−30–40%)</td></tr>
+            <tr data-cat="service"><td><span class="pill med">Подрядчик</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Охрана + видеоконтроль</td><td class="num">[сумма скрыта]</td><td>До 31.12.2025, автопролонг (лицензия)</td></tr>
+            <tr data-cat="service"><td><span class="pill med">Подрядчик</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Бухучёт, начисления, ЖКУ</td><td class="num">[сумма скрыта]</td><td>Автопролонгация</td></tr>
+            <tr data-cat="service"><td><span class="pill high">Подрядчик</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Юруслуги</td><td class="num">[сумма скрыта]</td><td>Адрес дома в договоре ≠ Шефская 103</td></tr>
+            <tr data-cat="service"><td><span class="pill low">Общий (101+103)</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт] (2014)</td><td>Домофоны (общий договор 2 дома)</td><td class="num">[сумма скрыта]</td><td>Общий договор 2 дома</td></tr>
+            <tr data-cat="service"><td><span class="pill med">Подрядчик</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Дератизация</td><td class="num">[сумма скрыта]</td><td>Устарел (2018)</td></tr>
+            <tr data-cat="service"><td><span class="pill low">Подрядчик</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Поверка узла учёта тепла</td><td class="num">[сумма скрыта]</td><td>Разовый (2020)</td></tr>
+            <tr data-cat="service"><td><span class="pill low">Подрядчик</span></td><td>[наименование контрагента скрыто]</td><td>[номер договора скрыт]</td><td>Регистрация граждан</td><td class="num">[сумма скрыта]</td><td>Автопролонгация</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sec-head" id="sec-103-calc">
+      <h2>Калькулятор резервов и трекер дорожной карты (дом 103)</h2>
+      <span>Интерактивное моделирование для дома 103 (228 квартир)</span>
+    </div>
+
+    <div class="panel">
+      <div class="calc-grid">
+        <div>
+          <div class="slider-row">
+            <label><span>Новая ставка с 1 оператора (сейчас 7 операторов =[сумма скрыта]):</span><span id="c103-op-val">[сумма скрыта]</span></label>
+            <input type="range" id="c103-op" min="1500" max="15000" step="500" value="7000">
+          </div>
+          <div class="slider-row">
+            <label><span>Экономия при переводе клининга в штат (сейчас ~[сумма скрыта]):</span><span id="c103-cln-val">35%</span></label>
+            <input type="range" id="c103-cln" min="0" max="45" step="5" value="35">
+          </div>
+          <div class="slider-row">
+            <label><span>Доля взыскания дебиторки (от 4 316 тыс. ₽):</span><span id="c103-debt-val">30%</span></label>
+            <input type="range" id="c103-debt" min="0" max="80" step="5" value="30">
+          </div>
+        </div>
+        <div class="calc-res">
+          <div style="font-size:13px;color:var(--muted)">Прирост дохода от 7 операторов (сверх[сумма скрыта]):</div>
+          <div class="big" id="c103-res-op">+[сумма скрыта]</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:8px">Экономия на клининге (1–2 штатных уборщика):</div>
+          <div class="big" id="c103-res-cln">+[сумма скрыта]</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:8px">Возврат дебиторки + суммарный эффект 1-го года:</div>
+          <div class="big" id="c103-res-tot">+1 966 440 ₽</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700">
+        <span id="sec-103-roadmap">Прогресс выполнения мероприятий дорожной карты (дом 103)</span>
+        <span id="prog-103-txt">0 из 16 выполнено (0%)</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-103-bar"></div></div>
+      <div id="chk-103-list"></div>
+    </div>
+
+    <details>
+      <summary>Реквизиты ТСЖ «Шефская» (дом 103), протоколы и судебные споры</summary>
+      <ul class="clean">
+        <li><strong>Реквизиты:</strong> ОГРН [реквизиты ТСЖ скрыты], ИНН [реквизиты ТСЖ скрыты] / КПП [реквизиты ТСЖ скрыты], [ОКВЭД скрыт], тел. [телефон и e-mail скрыты — см. раздел контактов ГИС ЖКХ].</li>
+        <li><strong>Руководство:</strong> действующий председатель правления (с 30.11.2021); ранее — предыдущий председатель правления (избрана 20.02.2019, зам. — [зам. председателя правления — ФИО скрыто по 152-ФЗ]).</li>
+        <li><strong>Протоколы:</strong> №1 [номер договора скрыт] (создание, вёл [представитель УК — ФИО скрыто по 152-ФЗ] от [наименование контрагента скрыто], 61,3%); ОСЧ [номер договора скрыт] (Устав, 75,05%); №1 правления [номер договора скрыт] (100%); [номер договора скрыт] ОСЧ [номер договора скрыт] и [номер договора скрыт] ОСС [номер договора скрыт] (кворум спорный).</li>
+        <li><strong>Суды и проверки:</strong> ~13–14 арбитражных дел на ~5,2 млн ₽ (100% — иски к ТСЖ как ответчику, в т.ч. [наименование контрагента скрыто]); 14 проверок с 2015 г. (в 5 выявлены нарушения). Возмещение субсидий снизилось с 857 тыс. ₽ (2020) до 88 тыс. ₽ (2025).</li>
+      </ul>
+    </details>
+  </div>
+
+  <!-- ==================== ВКЛАДКА: СРАВНЕНИЕ 101 И 103 ==================== -->
+  <div class="house-block" id="view-compare">
+    <div class="sec-head">
+      <h2>Сравнительный анализ домов 101 и 103 и синергия</h2>
+      <span>Два соседних ТСЖ с общим двором (суммарно 378 квартир; с Парниковой 8 и 3 — 596 квартир)</span>
+    </div>
+
+    <div class="panel tbl-wrap">
+      <table>
+        <thead><tr><th>Параметр</th><th>Дом 101 — ТСЖ «Шефская, 101»</th><th>Дом 103 — ТСЖ «Шефская»</th><th>Вывод и синергия</th></tr></thead>
+        <tbody>
+          <tr><td>ИНН / ОГРН / Дата рег.</td><td>[реквизиты ТСЖ скрыты]</td><td>[реквизиты ТСЖ скрыты]</td><td>Оба дома 2006 г., самостоятельное управление ТСЖ</td></tr>
+          <tr><td>Этажность / квартиры</td><td>16 этажей, 2 подъезда, 150 квартир</td><td>14 этажей, 228 квартир</td><td>Суммарно 378 квартир на одном общем дворе</td></tr>
+          <tr><td>Председатель правления</td><td>действующий председатель правления (с 04.08.2022)</td><td>действующий председатель правления (с 30.11.2021)</td><td>У обоих в открытом контуре не хватает протокола избрания</td></tr>
+          <tr><td>Дебиторская задолженность (2025)</td><td>4 099 тыс. ₽ (4,1 млн ₽)</td><td>4 316 тыс. ₽ (4,3 млн ₽, рекорд)</td><td>Единая юридическая практика взыскания и пени (ст. 155 ЖК РФ)</td></tr>
+          <tr><td>Остаток целевых средств (2025)</td><td>4 693 тыс. ₽ (+70% г/г)</td><td>5 469 тыс. ₽ (провал до 792 тыс. в 2022)</td><td>Планирование смет с резервом и размещение на депозитах</td></tr>
+          <tr><td>Фонд капремонта (спецсчёт)</td><td>5 133 тыс. ₽ (на конец 2025 г.)</td><td>13 313 тыс. ₽ (во II кв. 2026 г.)</td><td>Сравнение банковских условий на спецсчетах</td></tr>
+          <tr><td>Операторы связи</td><td>[сумма скрыта]</td><td>[сумма скрыта]</td><td>Совместные переговоры за 2 дома (~378 кв.) и ОСС (⅔ голосов)</td></tr>
+          <tr><td>Общие подрядчики и УК</td><td>[наименование контрагента скрыто], «[наименование контрагента скрыто]», «[наименование контрагента скрыто]»</td><td>[наименование контрагента скрыто], «[наименование контрагента скрыто]», «[наименование контрагента скрыто]», [наименование контрагента скрыто]</td><td>Совместные тендеры на объём (экономия 5–15%)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout danger">
+      <p><strong>Регламент рассмотрения сделок по уставу ТСЖ и ЖК РФ</strong></p>
+      <p>1) Правлениям 101 и 103 закрепить правило: аффилированное лицо не участвует в голосовании по вопросам его ИП/компаний ([наименование контрагента скрыто], [наименование контрагента скрыто], [наименование контрагента скрыто]). 2) Публиковать в ГИС ЖКХ все договоры. 3) Проводить открытые тендеры на клининг и уборку общего двора (2–3 котировки). 4) Одобрять сделки с заинтересованностью решением ОСС (ст. 10, 53.1 ГК РФ, ст. 147, 149 ЖК РФ).</p>
+    </div>
+  </div>
+
+
+  <!-- ==================== РЕКОМЕНДАЦИИ ДЛЯ ЧЛЕНОВ ПРАВЛЕНИЯ + ЭКОНОМИКА ==================== -->
+  <div class="sec-head" id="sec-board-rec">
+    <h2>Рекомендации членам правления: стратегия и экономика роста</h2>
+    <span>От монетизации общего имущества и субсидий к комфорту жильцов (без перегруза сметы)</span>
+  </div>
+
+  <div class="callout ok">
+    <p><strong>Управленческий принцип:</strong> Чтобы повысить качество жизни (умный доступ, безопасный двор, обновленные подъезды, энергоэффективность), правлению не нужно поднимать тарифы для жителей. Достаточно собрать <strong>дополнительную доходную базу</strong> из внешних и внутренних резервов и направить её в целевые проекты благоустройства.</p>
+  </div>
+
+  <!-- Компактный интерактивный конструктор экономики новых источников (по 2 домам) -->
+  <div class="panel" style="border-top:4px solid var(--up)">
+    <h3>
+      <span>🧮 Интерактивный конструктор экономики дополнительных доходов (дома 101 + 103)</span>
+      <span class="pill low">Потенциал 2026–2027</span>
+    </h3>
+    <p style="font-size:13px;color:var(--muted);margin:0 0 12px">Включайте/отключайте инициативы и регулируйте параметры, чтобы увидеть реалистичный годовой бюджет развития на два дома (378 квартир) сверх текущих сборов:</p>
+
+    <div class="calc-grid">
+      <div>
+        <label class="chk-item" style="margin-bottom:6px">
+          <input type="checkbox" class="eco-chk" id="eco-op" checked>
+          <span><strong>Пересмотр ставок домовых провайдеров</strong> (15 договоров в 2 домах; сейчас ~[сумма скрыта] → рыночные[сумма скрыта] за точку)</span>
+        </label>
+        <label class="chk-item" style="margin-bottom:6px">
+          <input type="checkbox" class="eco-chk" id="eco-roof" checked>
+          <span><strong>Аренда кровли / верхних точек под телеком-узлы</strong> (высотность 14–16 эт.: 2 базовых/релейных узла по[сумма скрыта])</span>
+        </label>
+        <label class="chk-item" style="margin-bottom:6px">
+          <input type="checkbox" class="eco-chk" id="eco-post" checked>
+          <span><strong>Постаматы и вендинг (вода/кофе) в холлах</strong> (4 точки в 2 домах по[сумма скрыта] + субабонентский учёт э/э)</span>
+        </label>
+        <label class="chk-item" style="margin-bottom:6px">
+          <input type="checkbox" class="eco-chk" id="eco-ev" checked>
+          <span><strong>Электрозарядные станции (ЭЗС) на парковке</strong> (2 поста через оператора по госпрограмме 2025–2027 гг.: аренда/доля ~[сумма скрыта])</span>
+        </label>
+        <label class="chk-item" style="margin-bottom:6px">
+          <input type="checkbox" class="eco-chk" id="eco-store">
+          <span><strong>Организованные веломеста / колясочные / кладовые</strong> (30 мест по[сумма скрыта] целевым взносом на содержание)</span>
+        </label>
+        <label class="chk-item" style="margin-bottom:0">
+          <input type="checkbox" class="eco-chk" id="eco-sub" checked>
+          <span><strong>Субсидии на благоустройство и энергоэффективность</strong> (софинансирование двора/узлов из бюджета, оценка в пересчёте на год)</span>
+        </label>
+      </div>
+
+      <div class="calc-res">
+        <div class="slider-row" style="margin-top:0">
+          <label><span>Коэффициент загрузки / собираемости по новым проектам:</span><span id="eco-load-val">80%</span></label>
+          <input type="range" id="eco-load" min="40" max="100" step="10" value="80">
+        </div>
+        <div style="font-size:12.5px;color:var(--muted);margin-top:10px">Дополнительный денежный поток на развитие (2 дома):</div>
+        <div class="big" id="eco-tot-year">+1 364 000 ₽ / год</div>
+        <div style="font-size:13px;font-weight:700;color:var(--accent)" id="eco-tot-month">≈ 113 667 ₽ / мес (или ~301 ₽/кв. в месяц без роста тарифа)</div>
+        <hr style="border:none;border-top:1px solid var(--line);margin:10px 0">
+        <div style="font-size:12.5px;color:var(--muted)" id="eco-what-buys">
+          <strong>На что хватает за 1 год:</strong> полная замена освещения МОП на LED с датчиками в обоих домах + установка IP-видеодомофонов и видеонаблюдения двора.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Компактная матрица рекомендаций с вкладками без визуального шума -->
+  <div class="panel">
+    <div class="filter-bar">
+      <button type="button" class="fbtn active" data-rec-tab="all">Все инициативы (9)</button>
+      <button type="button" class="fbtn" data-rec-tab="new-rev">💡 Новые источники дохода (5)</button>
+      <button type="button" class="fbtn" data-rec-tab="comfort">🏡 Комфорт и среда (2)</button>
+      <button type="button" class="fbtn" data-rec-tab="gov">⚖ Управление и 529-ФЗ (2)</button>
+    </div>
+
+    <div class="tbl-wrap">
+      <table id="tbl-rec">
+        <thead>
+          <tr>
+            <th>Направление</th>
+            <th>Суть рекомендации для правления (101 + 103)</th>
+            <th class="num">Экономика (2 дома)</th>
+            <th>Условия запуска (реалии 26.11.2026)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-rtab="new-rev">
+            <td><span class="pill low">Новый доход</span><br><strong>1. Аренда кровли и верхних точек</strong></td>
+            <td>Высотность 14 и 16 этажей востребована для радиорелейных мостов, базовых узлов связи и коммерческой телеметрии.</td>
+            <td class="num up"><strong>+240–[сумма скрыта]</strong><br><span style="font-size:11.5px;color:var(--muted)">10–[сумма скрыта] за узел</span></td>
+            <td>Решение ОСС (⅔ голосов по ЖК РФ), отдельный электросчётчик, акт обследования кровли и СанПиН.</td>
+          </tr>
+          <tr data-rtab="new-rev">
+            <td><span class="pill low">Новый доход</span><br><strong>2. Постаматы и вендинг в холлах</strong></td>
+            <td>Размещение постаматов маркетплейсов, автоматов питьевой воды и кофе в просторных входных группах (трафик 378 кв.).</td>
+            <td class="num up"><strong>+144–[сумма скрыта]</strong><br><span style="font-size:11.5px;color:var(--muted)">3–[сумма скрыта] за точку</span></td>
+            <td>ОСС (⅔ голосов), соблюдение ширины эвакуационных путей МЧС, субабонентский учёт электроэнергии/воды.</td>
+          </tr>
+          <tr data-rtab="new-rev">
+            <td><span class="pill low">Новый доход</span><br><strong>3. Электрозарядки (ЭЗС) на парковке</strong></td>
+            <td>Установка 1–2 зарядных станций через оператора зарядной сети (в 2025–2027 гг. действует госпрограмма субсидирования ЭЗС).</td>
+            <td class="num up"><strong>+60–[сумма скрыта]</strong><br><span style="font-size:11.5px;color:var(--muted)">аренда места / % от кВт·ч</span></td>
+            <td>Проверка резерва электрической мощности МКД, решение ОСС, разметка и правила парковки.</td>
+          </tr>
+          <tr data-rtab="new-rev">
+            <td><span class="pill low">Новый доход</span><br><strong>4. Веломеста, колясочные и кладовые</strong></td>
+            <td>Оборудование безопасных зон хранения колясок, велосипедов и сезонного инвентаря в неиспользуемых вспомогательных зонах.</td>
+            <td class="num up"><strong>+180–[сумма скрыта]</strong><br><span style="font-size:11.5px;color:var(--muted)">500–[сумма скрыта] за место</span></td>
+            <td>Решение ОСС, строгий запрет хранения горючих веществ и перекрытия путей эвакуации.</td>
+          </tr>
+          <tr data-rtab="new-rev">
+            <td><span class="pill low">Софинансирование</span><br><strong>5. Бюджетные субсидии (двор и тепло)</strong></td>
+            <td>Участие в программах Екатеринбурга («Формирование комфортной городской среды») и региональных субсидиях на энергоэффективность.</td>
+            <td class="num up"><strong>+300–[сумма скрыта]</strong><br><span style="font-size:11.5px;color:var(--muted)">возмещение до 50–80% затрат</span></td>
+            <td>Протокол ОСС о софинансировании, своевременная подача заявки в администрацию района (в д. 103 в 2020 г. было 857 тыс. ₽).</td>
+          </tr>
+          <tr data-rtab="comfort">
+            <td><span class="pill med">Комфорт</span><br><strong>6. «Быстрые победы» в подъездах и МОП</strong></td>
+            <td>Направить первые допдоходы на ежедневный визуальный эффект: тёплое LED-освещение с датчиками, навигация этажей, почтовые ящики, зеркала.</td>
+            <td class="num"><strong>300–800 тыс. ₽</strong><br><span style="font-size:11.5px;color:var(--muted)">окупается за 6–10 мес. допдоходов</span></td>
+            <td>Запрос 3 коммерческих предложений, поэтапная приёмка работ с фотофиксацией «до/после».</td>
+          </tr>
+          <tr data-rtab="comfort">
+            <td><span class="pill med">Комфорт</span><br><strong>7. Единый двор, IP-домофоны и SaaS</strong></td>
+            <td>Зонирование общего двора 101+103, единое видеонаблюдение, домофоны со смартфона и готовый SaaS-кабинет жильца вместо разработки с нуля.</td>
+            <td class="num"><strong>60–[сумма скрыта]</strong><br><span style="font-size:11.5px;color:var(--muted)">SaaS вместо 1,5–5 млн ₽ за MVP</span></td>
+            <td>Рабочая группа правлений 101 и 103, утверждение единого стандарта безопасности и цифровых сервисов.</td>
+          </tr>
+          <tr data-rtab="gov">
+            <td><span class="pill high">Управление</span><br><strong>8. Переход на ЭОСС (учёт № 529-ФЗ)</strong></td>
+            <td>С 01.09.2026 действуют обновлённые правила голосования по общему имуществу (№ 529-ФЗ). Провести 1 стартовое ОСС и перевести голосования в ГИС ЖКХ.</td>
+            <td class="num up"><strong>0 ₽ затрат</strong><br><span style="font-size:11.5px;color:var(--muted)">экономия на печати и обходах</span></td>
+            <td>Ст. 47.1 ЖК РФ: определение администратора ЭОСС, публикация всех недостающих протоколов в ГИС ЖКХ.</td>
+          </tr>
+          <tr data-rtab="gov">
+            <td><span class="pill high">Доверие</span><br><strong>9. Регламент прозрачности сделок и отчётность</strong></td>
+            <td>Неучастие аффилированных лиц в голосовании по своим договорам, тендеры (от 3 котировок) и ежеквартальный 1-страничный дашборд в лифтах.</td>
+            <td class="num up"><strong>+5–15% экономии</strong><br><span style="font-size:11.5px;color:var(--muted)">+ рост собираемости взносов</span></td>
+            <td>Ст. 53.1 ГК РФ, ст. 147 ЖК РФ; открытая публикация договоров с операторами и подрядчиками в ГИС ЖКХ.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== СЛОВАРЬ И 152-ФЗ ==================== -->
+  <div class="sec-head" id="sec-glossary">
+    <h2>Словарь терминов, источники и лог обезличивания (152-ФЗ)</h2>
+    <span>Справочный раздел</span>
+  </div>
+
+  <details>
+    <summary>Словарь сокращений (ГИС ЖКХ, ЭОСС, ОСС/ОСЧ, РСО, ИПУ/ОДПУ, MVP, SaaS)</summary>
+    <ul class="clean">
+      <li><strong>ГИС ЖКХ / ЭОСС:</strong> Государственная информационная система ЖКХ (дом.госуслуги.рф) / Электронное общее собрание собственников через Госуслуги.</li>
+      <li><strong>ГК РФ / ЖК РФ / КоАП РФ:</strong> Гражданский кодекс РФ / Жилищный кодекс РФ / Кодекс РФ об административных правонарушениях.</li>
+      <li><strong>ЕГРЮЛ / ИНН / КПП / ОГРН / ОКВЭД / СФР:</strong> Единый госреестр юрлиц / ИНН / КПП / ОГРН / классификатор видов деятельности / Социальный фонд России.</li>
+      <li><strong>ИПУ / ОДПУ / МОП / РСО / ТКО / ФХД:</strong> индивидуальный / общедомовой прибор учёта / места общего пользования / ресурсоснабжающая организация / твёрдые коммунальные отходы / финансово-хозяйственная деятельность.</li>
+      <li><strong>MVP / SaaS:</strong> минимально жизнеспособный продукт / готовое программное обеспечение по подписке.</li>
+    </ul>
+  </details>
+
+  <details open>
+    <summary>Лог обезличенных данных и правовой фильтрации (152-ФЗ и ст. 152 ГК РФ)</summary>
+    <ul class="clean">
+      <li><strong>Персональные данные физических лиц (ст. 10.1 152-ФЗ):</strong> полностью обезличены все ФИО и инициалы физических лиц (председателей правления, прежних руководителей, членов правления и ревизионных комиссий из протоколов 2006–2022 гг., представителей УК и индивидуального предпринимателя) — заменены на обезличенные должностные роли и статусы.</li>
+      <li><strong>Номера помещений и контактные данные:</strong> номера квартир и офисов заменены на <code>[скрыто]</code>; прямые телефонные номера и адреса электронной почты скрыты для исключения спама и несанкционированной обработки.</li>
+      <li><strong>Репутационная нейтральность (ст. 152 ГК РФ):</strong> оценочные формулировки приведены к нейтральному правовому стандарту (регламент сделок с заинтересованностью и раскрытия информации по ст. 147, 149 ЖК РФ и ст. 53.1 ГК РФ); финансовые показатели и даты сохранены; номера договоров, реквизиты и наименования юридических лиц скрыты для публикации в портфолио.</li>
+    </ul>
+  </details>
+
+  <footer>
+    Автономный интерактивный веб-документ (без внешних библиотек и CDN). Поддерживает светлую/тёмную тему, интерактивные SVG-графики с подсказками, фильтрацию таблиц, калькулятор резервов и сохранение прогресса дорожной карты в <code>localStorage</code>.
+  </footer>
+</div>
+
 <script>
 (function(){
-  var root=document.documentElement;
-  var THEMES=[
-    {key:'auto',icon:'◐',label:'Системная',attr:null},
-    {key:'light',icon:'☀',label:'Светлая',attr:'light'},
-    {key:'dark',icon:'☾',label:'Тёмная',attr:'dark'}
+  // 1. Theme toggle
+  var root = document.documentElement;
+  var themeBtn = document.getElementById('themeBtn');
+  var modes = [
+    {k:'auto', t:'💻 Тема: Системная', attr:null},
+    {k:'light', t:'☀ Тема: Светлая', attr:'light'},
+    {k:'dark', t:'☾ Тема: Тёмная', attr:'dark'}
   ];
-  function themeIndex(key){for(var i=0;i<THEMES.length;i++){if(THEMES[i].key===key)return i;}return 0;}
-  function applyTheme(key){
-    var th=THEMES[themeIndex(key)];
-    if(th.attr===null){root.removeAttribute('data-theme');}else{root.setAttribute('data-theme',th.attr);}
-    var bt=document.getElementById('themeToggle');
-    if(bt){bt.textContent=(th.icon+' '+th.label);}
+  var curTheme = 'auto';
+  try { curTheme = localStorage.getItem('tsj_dash_theme') || 'auto'; } catch(e){}
+  function setTheme(k){
+    var m = modes.find(function(x){return x.k===k;}) || modes[0];
+    curTheme = m.k;
+    if(m.attr) root.setAttribute('data-theme', m.attr); else root.removeAttribute('data-theme');
+    themeBtn.textContent = m.t;
+    try { localStorage.setItem('tsj_dash_theme', curTheme); } catch(e){}
   }
-  var savedTheme='auto';try{savedTheme=localStorage.getItem('tsjSiteTheme')||'auto';}catch(e){}
-  applyTheme(savedTheme);
-  var order=['auto','light','dark'];
-  var btn=document.getElementById('themeToggle');
-  if(btn){
-    btn.addEventListener('click',function(){
-      var idx=order.indexOf(savedTheme);idx=(idx+1)%order.length;savedTheme=order[idx];
-      applyTheme(savedTheme);
-      try{localStorage.setItem('tsjSiteTheme',savedTheme);}catch(e){}
+  setTheme(curTheme);
+  themeBtn.addEventListener('click', function(){
+    var i = modes.findIndex(function(x){return x.k===curTheme;});
+    setTheme(modes[(i+1)%modes.length].k);
+  });
+
+  // 2. House Tabs Switcher & Smart Quick-Link Routing
+  var activeView = '101';
+  var pills = document.querySelectorAll('.hpill');
+  function switchToView(v){
+    activeView = v;
+    pills.forEach(function(x){x.classList.toggle('active', x.getAttribute('data-view') === v);});
+    document.querySelectorAll('.house-block').forEach(function(b){b.classList.remove('visible');});
+    var target = document.getElementById('view-' + v);
+    if(target) target.classList.add('visible');
+  }
+  pills.forEach(function(p){
+    p.addEventListener('click', function(){
+      switchToView(p.getAttribute('data-view'));
+    });
+  });
+
+  var map103 = {
+    '#sec-charts': '#sec-103-charts',
+    '#sec-contracts': '#sec-103-contracts',
+    '#sec-calc': '#sec-103-calc',
+    '#sec-roadmap': '#sec-103-roadmap'
+  };
+  document.querySelectorAll('.qlink').forEach(function(link){
+    link.addEventListener('click', function(e){
+      var href = link.getAttribute('href');
+      if(!href || !href.startsWith('#')) return;
+      var targetId = href;
+      if(activeView === 'compare' && map103[href]){
+        switchToView('101');
+      } else if(activeView === '103' && map103[href]){
+        targetId = map103[href];
+      }
+      var el = document.querySelector(targetId);
+      if(el){
+        e.preventDefault();
+        el.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    });
+  });
+
+  // 3. Tooltip helper for SVG charts
+  var tip = document.getElementById('tip');
+  function bindTip(el, text){
+    el.style.cursor = 'pointer';
+    el.addEventListener('mouseenter', function(e){
+      tip.textContent = text;
+      tip.style.opacity = '1';
+    });
+    el.addEventListener('mousemove', function(e){
+      tip.style.left = (e.clientX + 12) + 'px';
+      tip.style.top = (e.clientY - 28) + 'px';
+    });
+    el.addEventListener('mouseleave', function(){
+      tip.style.opacity = '0';
     });
   }
+
+  // 4. SVG Chart Renderers
+  var NS = 'http://www.w3.org/2000/svg';
+  function elSVG(tag, attrs){
+    var el = document.createElementNS(NS, tag);
+    for(var k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+  }
+
+  function renderSignedBars(svgId, labels, values){
+    var svg = document.getElementById(svgId);
+    if(!svg) return;
+    var W=540, H=230, padL=48, padR=16, padT=18, padB=28;
+    var plotW = W-padL-padR, plotH = H-padT-padB;
+    var max = Math.max.apply(null, values.concat([0]));
+    var min = Math.min.apply(null, values.concat([0]));
+    var span = (max - min) || 1;
+    var zeroY = padT + (max / span) * plotH;
+
+    for(var g=0; g<=4; g++){
+      var val = min + (span * g / 4);
+      var y = padT + plotH - (g/4)*plotH;
+      svg.appendChild(elSVG('line',{x1:padL,y1:y,x2:W-padR,y2:y,class:'gridline'}));
+      var t = elSVG('text',{x:padL-6,y:y+4,'text-anchor':'end'});
+      t.textContent = Math.round(val);
+      svg.appendChild(t);
+    }
+    svg.appendChild(elSVG('line',{x1:padL,y1:zeroY,x2:W-padR,y2:zeroY,stroke:'#64748b','stroke-width':1.5}));
+
+    var step = plotW / labels.length;
+    var bw = Math.min(38, step * 0.58);
+    values.forEach(function(v, i){
+      var x = padL + i*step + (step - bw)/2;
+      var yTop = v >= 0 ? padT + ((max - v)/span)*plotH : zeroY;
+      var h = Math.max(3, Math.abs(v)/span * plotH);
+      var rect = elSVG('rect',{x:x,y:yTop,width:bw,height:h,rx:4,fill:v>=0?'#10b981':'#ef4444'});
+      bindTip(rect, labels[i] + ': ' + (v>0?'+':'') + v.toLocaleString('ru-RU') + ' тыс. ₽');
+      svg.appendChild(rect);
+      var lbl = elSVG('text',{x:x+bw/2,y:H-8,'text-anchor':'middle'});
+      lbl.textContent = labels[i];
+      svg.appendChild(lbl);
+    });
+  }
+
+  function renderMultiLine(svgId, labels, series){
+    var svg = document.getElementById(svgId);
+    if(!svg) return;
+    var W=540, H=230, padL=54, padR=20, padT=18, padB=28;
+    var plotW = W-padL-padR, plotH = H-padT-padB;
+    var max = 0;
+    series.forEach(function(s){ s.data.forEach(function(v){ if(v!=null && v>max) max=v; }); });
+    max = Math.ceil(max/1000)*1000 || 1;
+
+    for(var g=0; g<=4; g++){
+      var y = padT + plotH - (g/4)*plotH;
+      svg.appendChild(elSVG('line',{x1:padL,y1:y,x2:W-padR,y2:y,class:'gridline'}));
+      var t = elSVG('text',{x:padL-6,y:y+4,'text-anchor':'end'});
+      t.textContent = Math.round(max*g/4).toLocaleString('ru-RU');
+      svg.appendChild(t);
+    }
+
+    var X = function(i){ return padL + (i/(labels.length-1))*plotW; };
+    var Y = function(v){ return padT + plotH - (v/max)*plotH; };
+
+    labels.forEach(function(lb, i){
+      var t = elSVG('text',{x:X(i),y:H-8,'text-anchor':'middle'});
+      t.textContent = lb;
+      svg.appendChild(t);
+    });
+
+    series.forEach(function(s){
+      var pts = [];
+      s.data.forEach(function(v, i){ if(v!=null) pts.push(X(i)+','+Y(v)); });
+      if(pts.length > 1){
+        svg.appendChild(elSVG('polyline',{points:pts.join(' '),fill:'none',stroke:s.color,'stroke-width':2.6}));
+      }
+      s.data.forEach(function(v, i){
+        if(v==null) return;
+        var c = elSVG('circle',{cx:X(i),cy:Y(v),r:4.5,fill:s.color,stroke:'#fff','stroke-width':1.2});
+        bindTip(c, s.name + ' (' + labels[i] + '): ' + v.toLocaleString('ru-RU') + ' тыс. ₽');
+        svg.appendChild(c);
+      });
+    });
+  }
+
+  function renderGroupedBars(svgId, labels, series){
+    var svg = document.getElementById(svgId);
+    if(!svg) return;
+    var W=540, H=230, padL=54, padR=16, padT=18, padB=28;
+    var plotW = W-padL-padR, plotH = H-padT-padB;
+    var max = 0;
+    series.forEach(function(s){ s.data.forEach(function(v){ if(v!=null && v>max) max=v; }); });
+    max = Math.ceil(max/1000)*1000 || 1;
+
+    for(var g=0; g<=4; g++){
+      var y = padT + plotH - (g/4)*plotH;
+      svg.appendChild(elSVG('line',{x1:padL,y1:y,x2:W-padR,y2:y,class:'gridline'}));
+      var t = elSVG('text',{x:padL-6,y:y+4,'text-anchor':'end'});
+      t.textContent = Math.round(max*g/4).toLocaleString('ru-RU');
+      svg.appendChild(t);
+    }
+
+    var step = plotW / labels.length;
+    var bw = Math.min(22, (step * 0.72) / series.length);
+    labels.forEach(function(lb, i){
+      var groupStart = padL + i*step + (step - bw*series.length)/2;
+      series.forEach(function(s, si){
+        var v = s.data[i];
+        if(v==null) return;
+        var h = (v/max)*plotH;
+        var r = elSVG('rect',{x:groupStart + si*bw, y:padT+plotH-h, width:bw-2, height:h, rx:3, fill:s.color});
+        bindTip(r, s.name + ' (' + lb + '): ' + v.toLocaleString('ru-RU') + ' тыс. ₽');
+        svg.appendChild(r);
+      });
+      var t = elSVG('text',{x:padL + i*step + step/2, y:H-8, 'text-anchor':'middle'});
+      t.textContent = lb;
+      svg.appendChild(t);
+    });
+  }
+
+  // Render 101 charts
+  renderSignedBars('svg-101-profit', ['2019','2020','2021','2022','2023','2024','2025'], [142,600,228,626,421,-66,323]);
+  renderMultiLine('svg-101-assets', ['2020','2021','2022','2023','2024','2025'], [
+    {name:'Активы', color:'#0284c7', data:[9363,8924,10734,5643,6913,9370]},
+    {name:'Капитал', color:'#7c3aed', data:[7874,7766,9395,4481,5438,7699]},
+    {name:'Деньги', color:'#10b981', data:[5356,6324,7672,2340,3944,5271]}
+  ]);
+  renderGroupedBars('svg-101-debt', ['2020','2021','2022','2023','2024','2025'], [
+    {name:'Дебиторка', color:'#ef4444', data:[2728,2600,3062,2703,2969,4099]},
+    {name:'Кредиторка', color:'#64748b', data:[1489,1158,1339,1162,1475,1369]}
+  ]);
+
+  // Render 103 charts
+  renderGroupedBars('svg-103-ie', ['2018','2019','2020','2021','2022','2023','2024','2025'], [
+    {name:'Взносы', color:'#0284c7', data:[11589,16646,11251,11595,12910,13856,14334,15832]},
+    {name:'Расходы', color:'#7c3aed', data:[9943,11527,12385,11558,19734,11033,14231,14345]}
+  ]);
+  renderMultiLine('svg-103-kr', ['2019','2020','2021','2022','2023','2024','2025','II кв 26'], [
+    {name:'Фонд капремонта', color:'#f59e0b', data:[5777,7102,8298,4033,5973,8514,11613,13313]}
+  ]);
+  renderGroupedBars('svg-103-debt', ['2019','2020','2021','2022','2023','2024','2025'], [
+    {name:'Дебиторка', color:'#ef4444', data:[2238,3103,3127,3718,3765,2580,4316]},
+    {name:'Кредиторка', color:'#64748b', data:[1703,2527,1144,3394,2672,1741,1800]}
+  ]);
+  renderMultiLine('svg-103-res', ['2018','2019','2020','2021','2022','2023','2024','2025'], [
+    {name:'Остаток целевых', color:'#10b981', data:[4493,5435,6014,6954,792,3790,3894,5469]},
+    {name:'Финрезультат', color:'#f59e0b', data:[138,425,2150,1968,1269,454,1201,1471]}
+  ]);
+
+  // 5. Table Search & Filter
+  function setupFilter(searchId, btnAttr, tblId){
+    var inp = document.getElementById(searchId);
+    var btns = document.querySelectorAll('['+btnAttr+']');
+    var rows = document.querySelectorAll('#'+tblId+' tbody tr');
+    var cat = 'all';
+    function run(){
+      var q = (inp.value || '').toLowerCase();
+      rows.forEach(function(r){
+        var okCat = (cat === 'all' || r.getAttribute('data-cat') === cat);
+        var okTxt = r.textContent.toLowerCase().indexOf(q) !== -1;
+        r.style.display = (okCat && okTxt) ? '' : 'none';
+      });
+    }
+    inp.addEventListener('input', run);
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        btns.forEach(function(x){x.classList.remove('active');});
+        b.classList.add('active');
+        cat = b.getAttribute(btnAttr);
+        run();
+      });
+    });
+  }
+  setupFilter('search-101', 'data-cat-101', 'tbl-101');
+  setupFilter('search-103', 'data-cat-103', 'tbl-103');
+
+  // Recommendations Table Tab Filter
+  var recTabs = document.querySelectorAll('[data-rec-tab]');
+  var recRows = document.querySelectorAll('#tbl-rec tbody tr');
+  recTabs.forEach(function(b){
+    b.addEventListener('click', function(){
+      recTabs.forEach(function(x){x.classList.remove('active');});
+      b.classList.add('active');
+      var f = b.getAttribute('data-rec-tab');
+      recRows.forEach(function(r){
+        r.style.display = (f === 'all' || r.getAttribute('data-rtab') === f) ? '' : 'none';
+      });
+    });
+  });
+
+  // Interactive Economics Constructor (2 houses: 101 + 103)
+  function updEco(){
+    var load = (+document.getElementById('eco-load').value) / 100;
+    document.getElementById('eco-load-val').textContent = Math.round(load * 100) + '%';
+    var base = 0;
+    // 1. 15 proвайдеров * 5000 * 12 - текущие 186 430 = +713 570
+    if(document.getElementById('eco-op').checked) base += 713570;
+    // 2. Аренда кровли: 2 узла * 15000 * 12 = +360 000
+    if(document.getElementById('eco-roof').checked) base += 360000;
+    // 3. Постаматы/вендинг: 4 точки * 4500 * 12 = +216 000
+    if(document.getElementById('eco-post').checked) base += 216000;
+    // 4. ЭЗС: 2 поста * 7000 * 12 = +168 000
+    if(document.getElementById('eco-ev').checked) base += 168000;
+    // 5. Кладовые/веломеста: 30 мест * 800 * 12 = +288 000
+    if(document.getElementById('eco-store').checked) base += 288000;
+    // 6. Субсидии (среднегодовой эффект): +450 000
+    if(document.getElementById('eco-sub').checked) base += 450000;
+
+    var totYear = Math.round(base * load);
+    var totMonth = Math.round(totYear / 12);
+    var perApt = Math.round(totMonth / 378);
+    document.getElementById('eco-tot-year').textContent = '+' + totYear.toLocaleString('ru-RU') + ' ₽ / год';
+    document.getElementById('eco-tot-month').textContent = '≈ ' + totMonth.toLocaleString('ru-RU') + ' ₽ / мес (эквивалент ~' + perApt.toLocaleString('ru-RU') + ' ₽/кв. в месяц без роста тарифа)';
+
+    var buys = document.getElementById('eco-what-buys');
+    if(totYear >= 1400000){
+      buys.innerHTML = '<strong>На что хватает за 1 год:</strong> LED-освещение всех подъездов + IP-видеодомофоны и камеры двора + косметический ремонт входных групп обоих домов.';
+    } else if(totYear >= 800000){
+      buys.innerHTML = '<strong>На что хватает за 1 год:</strong> полная замена освещения МОП на LED с датчиками в обоих домах + IP-видеодомофоны и видеонаблюдение двора.';
+    } else if(totYear >= 350000){
+      buys.innerHTML = '<strong>На что хватает за 1 год:</strong> светодиодное освещение подъездов с датчиками движения + модернизация входных групп или SaaS-сервис для жильцов.';
+    } else {
+      buys.innerHTML = '<strong>На что хватает за 1 год:</strong> подключение готового SaaS-кабинета жильца и базовый аудит энергоэффективности.';
+    }
+  }
+  document.querySelectorAll('.eco-chk').forEach(function(c){ c.addEventListener('change', updEco); });
+  document.getElementById('eco-load').addEventListener('input', updEco);
+  updEco();
+
+  // 6. Financial Calculators
+  function fmtRub(n){ return '+' + Math.round(n).toLocaleString('ru-RU') + ' ₽'; }
+  function updCalc101(){
+    var op = +document.getElementById('c101-op').value;
+    var db = +document.getElementById('c101-debt').value;
+    var tn = +document.getElementById('c101-ten').value;
+    document.getElementById('c101-op-val').textContent = op.toLocaleString('ru-RU') + ' ₽/мес';
+    document.getElementById('c101-debt-val').textContent = db + '%';
+    document.getElementById('c101-ten-val').textContent = tn + '%';
+    var addOp = Math.max(0, op * 8 * 12 - 70570);
+    var addDb = 4099000 * (db / 100);
+    var addTn = 1900000 * (tn / 100);
+    document.getElementById('c101-res-op').textContent = fmtRub(addOp) + '/год';
+    document.getElementById('c101-res-debt').textContent = fmtRub(addDb);
+    document.getElementById('c101-res-tot').textContent = fmtRub(addOp + addDb + addTn);
+  }
+  ['c101-op','c101-debt','c101-ten'].forEach(function(id){ document.getElementById(id).addEventListener('input', updCalc101); });
+  updCalc101();
+
+  function updCalc103(){
+    var op = +document.getElementById('c103-op').value;
+    var cl = +document.getElementById('c103-cln').value;
+    var db = +document.getElementById('c103-debt').value;
+    document.getElementById('c103-op-val').textContent = op.toLocaleString('ru-RU') + ' ₽/мес';
+    document.getElementById('c103-cln-val').textContent = cl + '%';
+    document.getElementById('c103-debt-val').textContent = db + '%';
+    var addOp = Math.max(0, op * 7 * 12 - 115860);
+    var addCl = 570000 * (cl / 100);
+    var addDb = 4316000 * (db / 100);
+    document.getElementById('c103-res-op').textContent = fmtRub(addOp) + '/год';
+    document.getElementById('c103-res-cln').textContent = fmtRub(addCl) + '/год';
+    document.getElementById('c103-res-tot').textContent = fmtRub(addOp + addCl + addDb);
+  }
+  ['c103-op','c103-cln','c103-debt'].forEach(function(id){ document.getElementById(id).addEventListener('input', updCalc103); });
+  updCalc103();
+
+  // 7. Interactive Roadmap Checklists (persisted in localStorage)
+  var tasks101 = [
+    'Фаза 0 (1–3 мес.): Решение о переходе на электронное голосование (ЭОСС) через ГИС ЖКХ',
+    'Фаза 0 (3–6 мес.): Первое ОСС в ЭОСС (смета, резерв, сделки с заинтересованностью)',
+    'Фаза 0 (6–9 мес.): Пересмотр плат операторов связи до рыночного уровня (⅔ голосов)',
+    'Фаза 0 (с 3 мес.): Публикация всех протоколов, смет и отчётов в ГИС ЖКХ',
+    'Фаза 0 (3–18 мес.): Планомерное взыскание дебиторки (4,1 млн ₽, пени по ст. 155 ЖК РФ)',
+    'Фаза 0 (9–12 мес.): Тендеры подрядчиков (ТО, лифты, домофоны, аутсорсинг)',
+    'Фаза 1 (6–12 мес.): Современное LED-освещение МОП и двора с датчиками движения (150–400 тыс. ₽)',
+    'Фаза 1 (9–18 мес.): Ремонт/покраска подъездов и холлов, почтовые ящики (400–900 тыс. ₽)',
+    'Фаза 1 (12–24 мес.): Благоустройство двора, площадка ТКО, озеленение (300–800 тыс. ₽)',
+    'Фаза 1 (9–18 мес.): Входные группы и видеодомофоны (200–600 тыс. ₽)',
+    'Фаза 1 (12–24 мес.): Мелкий ремонт фасада и отмостки (150–400 тыс. ₽)',
+    'Фаза 2 (9–18 мес.): Цифровая платформа для жильцов на базе SaaS (0–150 тыс. ₽/год)',
+    'Фаза 2 (6–24 мес.): Энергоэффективность, тепловой узел и заявки на субсидии (500–1 500 тыс. ₽)',
+    'Фаза 2 (12–24 мес.): Общедомовое видеонаблюдение двора и подъездов (200–500 тыс. ₽)',
+    'Фаза 2 (по графику): Капремонт лифтов, кровли и фасада из фонда (5,1 млн ₽)',
+    'Фаза 2 (24–36 мес.): Современные детские и спортивные площадки двора (400–1 000 тыс. ₽)'
+  ];
+
+  var tasks103 = [
+    'Фаза 0 (1–3 мес.): Решение о переходе на электронное голосование (ЭОСС) через ГИС ЖКХ',
+    'Фаза 0 (3–6 мес.): Первое ОСС в ЭОСС (смета, резерв, одобрение сделок с заинтересованностью)',
+    'Фаза 0 (6–9 мес.): Пересмотр ставок 7 операторов связи (сейчас ~9,7 тыс. ₽/мес, ⅔ голосов)',
+    'Фаза 0 (с 3 мес.): Публикация протоколов (в т.ч. избрания председателя) и смет в ГИС ЖКХ',
+    'Фаза 0 (3–18 мес.): Взыскание рекордной дебиторской задолженности (4,3 млн ₽)',
+    'Фаза 0 (9–12 мес.): Тендеры подрядчиков ([наименование контрагента скрыто], лифты, клининг) и отмена автопролонгации',
+    'Фаза 1 (6–12 мес.): LED-освещение МОП и двора с датчиками движения (150–400 тыс. ₽)',
+    'Фаза 1 (9–18 мес.): Ремонт и покраска подъездов (400–900 тыс. ₽)',
+    'Фаза 1 (12–24 мес.): Благоустройство двора, парковки и контейнерной площадки (300–800 тыс. ₽)',
+    'Фаза 1 (9–18 мес.): Входные группы и видеодомофоны (200–600 тыс. ₽)',
+    'Фаза 1 (12–24 мес.): Мелкий ремонт фасада и отмостки (150–400 тыс. ₽)',
+    'Фаза 2 (9–18 мес.): Цифровая платформа для жильцов на базе SaaS (0–150 тыс. ₽/год)',
+    'Фаза 2 (6–24 мес.): Энергоэффективность и возобновление бюджетных субсидий (500–1 500 тыс. ₽)',
+    'Фаза 2 (12–24 мес.): Видеонаблюдение двора и подъездов (200–500 тыс. ₽)',
+    'Фаза 2 (12–36 мес.): Капремонт лифтов, кровли и фасада из фонда (13,3 млн ₽)',
+    'Фаза 2 (24–36 мес.): Детские и спортивные площадки двора (400–1 000 тыс. ₽)'
+  ];
+
+  function buildChecklist(listId, txtId, barId, storeKey, items){
+    var box = document.getElementById(listId);
+    var txt = document.getElementById(txtId);
+    var bar = document.getElementById(barId);
+    var state = {};
+    try { state = JSON.parse(localStorage.getItem(storeKey) || '{}'); } catch(e){}
+
+    function refresh(){
+      var done = 0;
+      items.forEach(function(_, idx){ if(state[idx]) done++; });
+      var pct = Math.round((done / items.length) * 100);
+      txt.textContent = done + ' из ' + items.length + ' выполнено (' + pct + '%)';
+      bar.style.width = pct + '%';
+    }
+
+    items.forEach(function(label, idx){
+      var row = document.createElement('label');
+      row.className = 'chk-item' + (state[idx] ? ' done' : '');
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = !!state[idx];
+      cb.addEventListener('change', function(){
+        state[idx] = cb.checked;
+        if(cb.checked) row.classList.add('done'); else row.classList.remove('done');
+        try { localStorage.setItem(storeKey, JSON.stringify(state)); } catch(e){}
+        refresh();
+      });
+      var sp = document.createElement('span');
+      sp.textContent = label;
+      row.appendChild(cb);
+      row.appendChild(sp);
+      box.appendChild(row);
+    });
+    refresh();
+  }
+
+  buildChecklist('chk-101-list', 'prog-101-txt', 'prog-101-bar', 'tsj101_roadmap_v1', tasks101);
+  buildChecklist('chk-103-list', 'prog-103-txt', 'prog-103-bar', 'tsj103_roadmap_v1', tasks103);
+
+  // Auto-open <details> for printing and restore state after print
+  var openedForPrint = [];
+  window.addEventListener('beforeprint', function(){
+    openedForPrint = [];
+    document.querySelectorAll('details').forEach(function(d){
+      if(!d.open){
+        d.setAttribute('open', '');
+        openedForPrint.push(d);
+      }
+    });
+  });
+  window.addEventListener('afterprint', function(){
+    openedForPrint.forEach(function(d){
+      d.removeAttribute('open');
+    });
+    openedForPrint = [];
+  });
 })();
 </script>
 </body>
